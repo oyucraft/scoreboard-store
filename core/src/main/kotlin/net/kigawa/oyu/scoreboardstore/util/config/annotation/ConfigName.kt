@@ -1,4 +1,4 @@
-package io.github.oneservermc.onedatabase.util.config.annotation
+package net.kigawa.oyu.scoreboardstore.util.config.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)

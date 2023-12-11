@@ -1,8 +1,8 @@
-name: one-database
-version: '${project.version}'
-main: io.github.oneservermc.onedatabase.OneDatabase
+name: scoreboard-store
+version: 1.0.0
+main: net.kigawa.oyu.scoreboardstore.ScoreboardStore
 
 api-version: 1.18
-authors: [ one-database ]
+authors: [ kigawa ]
 depend: [ ]
 softdepend: [ ]

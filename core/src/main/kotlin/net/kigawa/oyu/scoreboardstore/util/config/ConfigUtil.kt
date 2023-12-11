@@ -1,9 +1,9 @@
-package io.github.oneservermc.onedatabase.util.config
+package net.kigawa.oyu.scoreboardstore.util.config
 
-import io.github.oneservermc.onedatabase.util.PluginBase
-import io.github.oneservermc.onedatabase.util.caseformat.CaseFormat
-import io.github.oneservermc.onedatabase.util.config.annotation.ConfigName
-import io.github.oneservermc.onedatabase.util.config.annotation.ConfigValue
+import net.kigawa.oyu.scoreboardstore.util.PluginBase
+import net.kigawa.oyu.scoreboardstore.util.caseformat.CaseFormat
+import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigName
+import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 import net.kigawa.kutil.kutil.reflection.KutilReflect
 import java.io.File
 

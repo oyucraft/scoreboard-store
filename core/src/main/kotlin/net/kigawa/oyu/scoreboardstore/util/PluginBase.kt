@@ -1,19 +1,20 @@
-package io.github.oneservermc.onedatabase.util
+package net.kigawa.oyu.scoreboardstore.util
 
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIBukkitConfig
-import io.github.oneservermc.onedatabase.util.config.Config
-import io.github.oneservermc.onedatabase.util.config.ConfigInitializedFilter
-import io.github.oneservermc.onedatabase.util.config.ConfigManager
-import io.github.oneservermc.onedatabase.util.config.ConfigUtil
-import io.github.oneservermc.onedatabase.util.unit.ListenerFilter
-import io.github.oneservermc.onedatabase.util.unit.PluginUnitLogger
 import net.kigawa.kutil.unitapi.component.InitializedFilterComponent
+import net.kigawa.kutil.unitapi.component.UnitFinderComponent
 import net.kigawa.kutil.unitapi.component.UnitLoggerComponent
 import net.kigawa.kutil.unitapi.component.container.UnitContainer
 import net.kigawa.kutil.unitapi.registrar.ClassRegistrar
 import net.kigawa.kutil.unitapi.registrar.InstanceRegistrar
 import net.kigawa.kutil.unitapi.registrar.ResourceRegistrar
+import net.kigawa.oyu.scoreboardstore.util.config.Config
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigInitializedFilter
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigManager
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigUtil
+import net.kigawa.oyu.scoreboardstore.util.unit.ListenerFilter
+import net.kigawa.oyu.scoreboardstore.util.unit.PluginUnitLogger
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -30,6 +31,8 @@ abstract class PluginBase : JavaPlugin() {
     container.getUnit(InstanceRegistrar::class.java).apply {
       register(this@PluginBase)
       register(logger)
+      register(server)
+      server.scoreboardManager?.let { register(it) }
     }
     container.getUnit(ResourceRegistrar::class.java).apply {
       register(javaClass)
@@ -43,6 +46,7 @@ abstract class PluginBase : JavaPlugin() {
       add(ConfigInitializedFilter::class.java)
       add(ListenerFilter::class.java)
     }
+    container.getUnit(UnitFinderComponent::class.java).add(PluginFinder::class.java)
 
     container.getUnit(ResourceRegistrar::class.java).register(javaClass)
 

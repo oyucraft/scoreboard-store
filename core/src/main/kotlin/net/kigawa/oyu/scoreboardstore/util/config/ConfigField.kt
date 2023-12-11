@@ -1,6 +1,6 @@
-package io.github.oneservermc.onedatabase.util.config
+package net.kigawa.oyu.scoreboardstore.util.config
 
-import io.github.oneservermc.onedatabase.util.config.annotation.ConfigValue
+import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 import java.lang.reflect.Field
 
 class ConfigField(

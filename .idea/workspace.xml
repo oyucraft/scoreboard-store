@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="scoreboard-store.core:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="" />
+    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="init">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/ScoreboardStore.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/ScoreboardStoreConfig.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/PluginFinder.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/command/AbstractCommand.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/command/SubCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/core/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/ScoreboardStore.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/ScoreboardStoreConfig.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/PluginBase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/PluginBase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/caseformat/CaseFormat.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/caseformat/CaseFormat.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/caseformat/CaseString.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/caseformat/CaseString.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/Config.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/Config.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/ConfigField.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigField.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/ConfigInitializedFilter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigInitializedFilter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/ConfigManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/ConfigUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigUtil.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/annotation/ConfigName.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/annotation/ConfigName.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/config/annotation/ConfigValue.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/annotation/ConfigValue.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/unit/ListenerFilter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/unit/ListenerFilter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/io/github/oneservermc/onedatabase/util/unit/PluginUnitLogger.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/unit/PluginUnitLogger.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/resources/plugin.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,28 +47,87 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="scoreboard-store" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2ZP5S8VMcJjwtNqxwQFDSFeMZPx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.scoreboard-store のビルド.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ソースのダウンロード.executor&quot;: &quot;Run&quot;,
+    &quot;JAR アプリケーション.server.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/project/dev/oyu/scoreboard-store/scoreboard-store/core/src/main/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;アーティファクト&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15990058&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.16081633&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\dev\oyu\scoreboard-store\scoreboard-store\core\src\main\java\io\github\oneservermc\onedatabase\util\command" />
+      <recent name="D:\project\dev\oyu\scoreboard-store\scoreboard-store" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="server" type="JarApplication">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/../../../../../McServers/paper 1.20.2/spigot-1.20.2.jar" />
+      <option name="PROGRAM_PARAMETERS" value="nogui" />
+      <option name="WORKING_DIRECTORY" value="D:\McServers\paper 1.20.2\" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="scoreboard-store.core:jar" />
+        </option>
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -52,11 +143,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1702310871012</updated>
-      <workItem from="1702310872037" duration="2000" />
+      <workItem from="1702310872037" duration="4489000" />
+      <workItem from="1702315608670" duration="674000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1702311642401</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702311642401</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
 </project>

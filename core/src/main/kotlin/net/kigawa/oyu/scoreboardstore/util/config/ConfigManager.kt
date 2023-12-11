@@ -1,6 +1,7 @@
-package io.github.oneservermc.onedatabase.util.config
+package net.kigawa.oyu.scoreboardstore.util.config
 
-import io.github.oneservermc.onedatabase.util.PluginBase
+import net.kigawa.oyu.scoreboardstore.util.PluginBase
+import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 import java.io.InputStreamReader
@@ -11,7 +12,7 @@ class ConfigManager(
   plugin: PluginBase,
 ) {
 
-  private val yaml = Yaml(CustomClassLoaderConstructor(plugin.pluginClassLoader))
+  private val yaml = Yaml(CustomClassLoaderConstructor(plugin.pluginClassLoader, LoaderOptions()))
   fun save(config: Config) {
     createFile(config)
 

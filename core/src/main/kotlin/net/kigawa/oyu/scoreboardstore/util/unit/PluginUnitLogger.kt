@@ -1,4 +1,4 @@
-package io.github.oneservermc.onedatabase.util.unit
+package net.kigawa.oyu.scoreboardstore.util.unit
 
 import net.kigawa.kutil.unitapi.extention.Message
 import net.kigawa.kutil.unitapi.extention.UnitLogger

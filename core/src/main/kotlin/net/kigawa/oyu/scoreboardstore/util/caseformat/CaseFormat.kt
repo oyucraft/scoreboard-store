@@ -1,4 +1,4 @@
-package io.github.oneservermc.onedatabase.util.caseformat
+package net.kigawa.oyu.scoreboardstore.util.caseformat
 
 @Suppress("unused")
 enum class CaseFormat(

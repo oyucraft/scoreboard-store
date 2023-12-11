@@ -1,4 +1,4 @@
-package io.github.oneservermc.onedatabase.util.config
+package net.kigawa.oyu.scoreboardstore.util.config
 
 import net.kigawa.kutil.unitapi.component.InitStack
 import net.kigawa.kutil.unitapi.extention.InitializedFilter
