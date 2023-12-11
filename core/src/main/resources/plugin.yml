@@ -1,0 +1,8 @@
+name: one-database
+version: '${project.version}'
+main: io.github.oneservermc.onedatabase.OneDatabase
+
+api-version: 1.18
+authors: [ one-database ]
+depend: [ ]
+softdepend: [ ]
