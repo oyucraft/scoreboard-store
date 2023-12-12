@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Database.kt" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerDatabase.kt" dialect="MySQL" />
+    <file url="PROJECT" dialect="MySQL" />
+  </component>
+</project>
