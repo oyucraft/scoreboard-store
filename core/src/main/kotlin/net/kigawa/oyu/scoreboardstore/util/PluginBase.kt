@@ -9,6 +9,7 @@ import net.kigawa.kutil.unitapi.component.container.UnitContainer
 import net.kigawa.kutil.unitapi.registrar.ClassRegistrar
 import net.kigawa.kutil.unitapi.registrar.InstanceRegistrar
 import net.kigawa.kutil.unitapi.registrar.ResourceRegistrar
+import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import net.kigawa.oyu.scoreboardstore.util.config.Config
 import net.kigawa.oyu.scoreboardstore.util.config.ConfigInitializedFilter
 import net.kigawa.oyu.scoreboardstore.util.config.ConfigManager
@@ -33,6 +34,7 @@ abstract class PluginBase : JavaPlugin() {
       register(logger)
       register(server)
       server.scoreboardManager?.let { register(it) }
+      register(Coroutines(logger))
     }
     container.getUnit(ResourceRegistrar::class.java).apply {
       register(javaClass)

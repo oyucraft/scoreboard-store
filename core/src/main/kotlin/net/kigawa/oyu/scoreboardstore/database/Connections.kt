@@ -16,6 +16,7 @@ class Connections(
     val config = HikariConfig()
     config.driverClassName = "com.mysql.jdbc.Driver"
     config.jdbcUrl = "jdbc:mysql://${pluginConfig.dbHost}:${pluginConfig.dbPort}/${pluginConfig.dbName}"
+
     config.addDataSourceProperty("user", pluginConfig.dbUser)
     config.addDataSourceProperty("password", pluginConfig.dbPass)
     config.addDataSourceProperty("cachePrepStmts", "true")

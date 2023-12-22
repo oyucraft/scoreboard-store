@@ -1,5 +1,7 @@
 plugins {
   id("net.kigawa.java-conventions")
+  id("application")
+  id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 dependencies {
@@ -10,9 +12,15 @@ dependencies {
   implementation("com.zaxxer:HikariCP:5.0.1")
   // https://mvnrepository.com/artifact/org.yaml/snakeyaml
   implementation("org.yaml:snakeyaml:2.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
 kotlin {
-  java {
 
+  tasks {
+    shadowJar {
+      archiveFileName.set("${project.parent?.name ?: project.name}.jar")
+      project.setProperty("mainClassName", "")
+    }
   }
 }
+
