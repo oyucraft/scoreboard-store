@@ -1,6 +1,7 @@
 package net.kigawa.oyu.scoreboardstore.database
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,6 +13,7 @@ import org.bukkit.scoreboard.ScoreboardManager
 class Database(
   private val connections: Connections,
   private val scoreboardManager: ScoreboardManager,
+  private val coroutines: Coroutines
 ) : Listener {
   private val playerDatabases = mutableListOf<PlayerDatabase>()
 
@@ -46,7 +48,8 @@ class Database(
         PlayerDatabase(
           playerJoinEvent.player,
           connections,
-          scoreboardManager = scoreboardManager
+          scoreboardManager = scoreboardManager,
+          coroutines = coroutines
         )
       )
     }

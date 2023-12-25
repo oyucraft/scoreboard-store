@@ -9,9 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="fix">
+    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="change to async">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Database.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Database.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -239,7 +239,7 @@
       <workItem from="1703073036887" duration="12284000" />
       <workItem from="1703091591659" duration="655000" />
       <workItem from="1703247965923" duration="4661000" />
-      <workItem from="1703346566141" duration="1776000" />
+      <workItem from="1703346566141" duration="2989000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -273,7 +273,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703259913281</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="change to async">
+      <option name="closed" value="true" />
+      <created>1703523450408</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1703523450408</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -282,7 +290,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+    <MESSAGE value="change to async" />
+    <option name="LAST_COMMIT_MESSAGE" value="change to async" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
