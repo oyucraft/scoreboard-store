@@ -69,8 +69,8 @@ class PlayerDatabase(
   }
 
   override fun close() {
-    connections.get().use { con ->
-      coroutines.launchIo {
+    coroutines.launchIo {
+      connections.get().use { con ->
         synchronized(scores) {
           runBlocking {
             scores.await().forEach { playerScore ->

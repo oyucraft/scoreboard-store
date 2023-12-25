@@ -13,6 +13,7 @@ dependencies {
   // https://mvnrepository.com/artifact/org.yaml/snakeyaml
   implementation("org.yaml:snakeyaml:2.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+  implementation(kotlin("reflect"))
 }
 kotlin {
 
