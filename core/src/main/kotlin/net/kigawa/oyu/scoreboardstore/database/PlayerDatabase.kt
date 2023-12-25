@@ -1,5 +1,8 @@
 package net.kigawa.oyu.scoreboardstore.database
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.runBlocking
+import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.ScoreboardManager
 import java.sql.Statement
@@ -8,68 +11,81 @@ class PlayerDatabase(
   val player: Player,
   private val connections: Connections,
   private val scoreboardManager: ScoreboardManager,
+  private val coroutines: Coroutines,
 ) : AutoCloseable {
-  private val playerId: Int
-  private val scores = mutableSetOf<PlayerScore>()
+  private val playerId: Deferred<Int>
+  private val scores: Deferred<MutableSet<PlayerScore>>
 
   init {
-    connections.get().use con@{ con ->
-      val resultId = con.prepareStatement("SELECT id FROM player WHERE uuid = ?").use {
-        it.setString(1, player.uniqueId.toString())
-        val result = it.executeQuery()
-        return@use if (result.next()) {
-          result.getInt("id")
-        } else null
-      }
-      if (resultId != null) {
-        playerId = resultId
-      } else con.prepareStatement(
-        "INSERT INTO player (uuid) VALUES (?)",
-        Statement.RETURN_GENERATED_KEYS
-      ).use { st ->
-        st.setString(1, player.uniqueId.toString())
-        st.executeUpdate()
-        st.generatedKeys.use {
-          it.next()
-          playerId = it.getInt(1)
+    playerId = coroutines.async {
+      connections.get().use con@{ con ->
+        val resultId = con.prepareStatement("SELECT id FROM player WHERE uuid = ?").use {
+          it.setString(1, player.uniqueId.toString())
+          val result = it.executeQuery()
+          return@use if (result.next()) {
+            result.getInt("id")
+          } else null
         }
-      }
-
-      con.prepareStatement(
-        "SELECT player_id,`key`,value FROM score " +
-            "WHERE player_id = ?"
-      ).use {
-        it.setInt(1, playerId)
-        val result = it.executeQuery()
-        synchronized(scores) {
-          while (result.next()) {
-            scores.add(
-              PlayerScore(
-                key = result.getString("key"),
-                value = result.getInt("value")
-              )
-            )
+        if (resultId != null) {
+          return@async resultId
+        } else con.prepareStatement(
+          "INSERT INTO player (uuid) VALUES (?)",
+          Statement.RETURN_GENERATED_KEYS
+        ).use { st ->
+          st.setString(1, player.uniqueId.toString())
+          st.executeUpdate()
+          st.generatedKeys.use {
+            it.next()
+            return@async it.getInt(1)
           }
         }
       }
+    }
+    scores = coroutines.asyncIo {
+      val scores = mutableSetOf<PlayerScore>()
+      connections.get().use con@{ con ->
 
+        con.prepareStatement(
+          "SELECT player_id,`key`,value FROM score " +
+              "WHERE player_id = ?"
+        ).use {
+          it.setInt(1, playerId.await())
+          val result = it.executeQuery()
+          synchronized(scores) {
+            while (result.next()) {
+              scores.add(
+                PlayerScore(
+                  key = result.getString("key"),
+                  value = result.getInt("value")
+                )
+              )
+            }
+          }
+        }
+
+      }
+      return@asyncIo scores
     }
   }
 
   override fun close() {
     connections.get().use { con ->
-      synchronized(scores) {
-        scores.forEach { playerScore ->
-          con.prepareStatement(
-            "INSERT INTO score (player_id,`key`,value) VALUES (?,?,?) " +
-                "ON DUPLICATE KEY UPDATE " +
-                "value = ?"
-          ).use {
-            it.setInt(1, playerId)
-            it.setString(2, playerScore.key)
-            it.setInt(3, playerScore.value)
-            it.setInt(4, playerScore.value)
-            it.executeUpdate()
+      coroutines.launchIo {
+        synchronized(scores) {
+          runBlocking {
+            scores.await().forEach { playerScore ->
+              con.prepareStatement(
+                "INSERT INTO score (player_id,`key`,value) VALUES (?,?,?) " +
+                    "ON DUPLICATE KEY UPDATE " +
+                    "value = ?"
+              ).use {
+                it.setInt(1, playerId.await())
+                it.setString(2, playerScore.key)
+                it.setInt(3, playerScore.value)
+                it.setInt(4, playerScore.value)
+                it.executeUpdate()
+              }
+            }
           }
         }
       }
@@ -78,24 +94,30 @@ class PlayerDatabase(
   }
 
   fun save(key: String) {
-    synchronized(scores) {
-      scores.removeIf {
-        it.key == key
-      }
-      scores.add(
-        PlayerScore(
-          key, scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score
+    coroutines.launchIo {
+      synchronized(scores) {
+        val scores = runBlocking { scores.await() }
+        scores.removeIf {
+          it.key == key
+        }
+        scores.add(
+          PlayerScore(
+            key, scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score
+          )
         )
-      )
+      }
     }
   }
 
-  fun load(key: String) {
-    synchronized(scores) {
-      val score = scores.first {
-        it.key == key
+  fun load(key: String, defaultValue: Int) {
+    scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score = defaultValue
+    coroutines.launchIo {
+      synchronized(scores) {
+        val score = runBlocking { scores.await() }.first {
+          it.key == key
+        }
+        scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score = score.value
       }
-      scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score = score.value
     }
   }
 

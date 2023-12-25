@@ -3,6 +3,7 @@ package net.kigawa.oyu.scoreboardstore.command
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
+import dev.jorel.commandapi.arguments.IntegerArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandArguments
@@ -48,6 +49,7 @@ class ScoreStoreCommand(
   @SubCommand
   fun load(): CommandAPICommand = CommandAPICommand("load")
     .withArguments(PlayerArgument("player"))
+    .withArguments(IntegerArgument("default value"))
     .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
       CompletableFuture.supplyAsync {
         return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
@@ -58,7 +60,8 @@ class ScoreStoreCommand(
     .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->
       val player = commandArguments.get("player") as Player
       val key = commandArguments.get("scoreboard name") as String
-      database.getPlayerDatabase(player).load(key)
+      val defaultValue = commandArguments.get("default value") as Int
+      database.getPlayerDatabase(player).load(key, defaultValue)
     })
 
   @SubCommand
