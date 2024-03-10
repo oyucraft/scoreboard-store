@@ -1,4 +1,4 @@
-package net.kigawa.mcsm.util.concurrent
+package net.kigawa.oyu.scoreboardstore.util.concurrent
 
 import kotlinx.coroutines.CoroutineScope
 

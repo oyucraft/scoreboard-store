@@ -13,59 +13,54 @@ class PlayerDatabase(
   private val scoreboardManager: ScoreboardManager,
   private val coroutines: Coroutines,
 ) : AutoCloseable {
-  private val playerId: Deferred<Int>
-  private val scores: Deferred<MutableSet<PlayerScore>>
-
-  init {
-    playerId = coroutines.async {
-      connections.get().use con@{ con ->
-        val resultId = con.prepareStatement("SELECT id FROM player WHERE uuid = ?").use {
-          it.setString(1, player.uniqueId.toString())
-          val result = it.executeQuery()
-          return@use if (result.next()) {
-            result.getInt("id")
-          } else null
-        }
-        if (resultId != null) {
-          return@async resultId
-        } else con.prepareStatement(
-          "INSERT INTO player (uuid) VALUES (?)",
-          Statement.RETURN_GENERATED_KEYS
-        ).use { st ->
-          st.setString(1, player.uniqueId.toString())
-          st.executeUpdate()
-          st.generatedKeys.use {
-            it.next()
-            return@async it.getInt(1)
-          }
+  val playerId: Deferred<Int> = coroutines.async {
+    connections.get().use con@{ con ->
+      val resultId = con.prepareStatement("SELECT id FROM player WHERE uuid = ?").use {
+        it.setString(1, player.uniqueId.toString())
+        val result = it.executeQuery()
+        return@use if (result.next()) {
+          result.getInt("id")
+        } else null
+      }
+      if (resultId != null) {
+        return@async resultId
+      } else con.prepareStatement(
+        "INSERT INTO player (uuid) VALUES (?)",
+        Statement.RETURN_GENERATED_KEYS
+      ).use { st ->
+        st.setString(1, player.uniqueId.toString())
+        st.executeUpdate()
+        st.generatedKeys.use {
+          it.next()
+          return@async it.getInt(1)
         }
       }
     }
-    scores = coroutines.asyncIo {
-      val scores = mutableSetOf<PlayerScore>()
-      connections.get().use con@{ con ->
+  }
+  private val scores: Deferred<MutableSet<PlayerScore>> = coroutines.asyncIo {
+    val scores = mutableSetOf<PlayerScore>()
+    connections.get().use con@{ con ->
 
-        con.prepareStatement(
-          "SELECT player_id,`key`,value FROM score " +
-              "WHERE player_id = ?"
-        ).use {
-          it.setInt(1, playerId.await())
-          val result = it.executeQuery()
-          synchronized(scores) {
-            while (result.next()) {
-              scores.add(
-                PlayerScore(
-                  key = result.getString("key"),
-                  value = result.getInt("value")
-                )
+      con.prepareStatement(
+        "SELECT player_id,`key`,value FROM score " +
+            "WHERE player_id = ?"
+      ).use {
+        it.setInt(1, playerId.await())
+        val result = it.executeQuery()
+        synchronized(scores) {
+          while (result.next()) {
+            scores.add(
+              PlayerScore(
+                key = result.getString("key"),
+                value = result.getInt("value")
               )
-            }
+            )
           }
         }
-
       }
-      return@asyncIo scores
+
     }
+    return@asyncIo scores
   }
 
   override fun close() {

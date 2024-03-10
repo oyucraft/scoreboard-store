@@ -1,8 +1,6 @@
 package net.kigawa.oyu.scoreboardstore.util.concurrent
 
 import kotlinx.coroutines.*
-import net.kigawa.mcsm.util.concurrent.CoroutineLaunchException
-import net.kigawa.mcsm.util.concurrent.DefaultCoroutines
 import java.util.logging.Logger
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
