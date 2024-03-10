@@ -35,7 +35,7 @@ class StatusDatabase(
             val type = StatusType.entries.first { it.key == result.getInt("type") }
             val value = result.getInt("value")
             synchronized(statuses) {
-              statuses.first { it.statusType == type }.updateScore(value)
+              statuses.first { it.statusType == type }.updateValue(value)
             }
           }
         }
@@ -61,7 +61,7 @@ class StatusDatabase(
                 it.setInt(1, playerDatabase.playerId.await())
                 it.setInt(2, entry.statusType.key)
                 it.setInt(3, entry.value)
-                it.setInt(3, entry.value)
+                it.setInt(4, entry.value)
                 it.executeUpdate()
               }
             }
@@ -70,5 +70,9 @@ class StatusDatabase(
       }
     }
 
+  }
+
+  fun getStatus(statusType: StatusType): StatusEntry {
+    return statuses.first { it.statusType == statusType }
   }
 }

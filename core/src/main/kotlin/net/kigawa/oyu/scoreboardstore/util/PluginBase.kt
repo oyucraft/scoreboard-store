@@ -35,6 +35,7 @@ abstract class PluginBase : JavaPlugin() {
       register(server)
       server.scoreboardManager?.let { register(it) }
       register(Coroutines(logger))
+      register(server.scheduler)
     }
     container.getUnit(ResourceRegistrar::class.java).apply {
       register(javaClass)

@@ -105,4 +105,12 @@ class Database(
       }
     }
   }
+
+  fun getStatusDatabase(player: Player): StatusDatabase {
+    return synchronized(statusDatabases) {
+      statusDatabases.first {
+        it.player == player
+      }
+    }
+  }
 }

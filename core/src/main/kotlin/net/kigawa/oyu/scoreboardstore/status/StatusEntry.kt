@@ -5,9 +5,9 @@ import org.bukkit.scoreboard.Score
 import org.bukkit.scoreboard.ScoreboardManager
 
 class StatusEntry(
-  private val scoreboardManager: ScoreboardManager,
+  scoreboardManager: ScoreboardManager,
   val statusType: StatusType,
-  private val player: Player,
+  player: Player,
 ) {
   private val score: Score
   var value: Int = -1
@@ -20,7 +20,7 @@ class StatusEntry(
     score.score = -1
   }
 
-  fun updateScore(newScore: Int) {
+  fun updateValue(newScore: Int) {
     score.score = newScore
     value = newScore
   }
