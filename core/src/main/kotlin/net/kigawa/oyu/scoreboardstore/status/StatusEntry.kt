@@ -10,8 +10,9 @@ class StatusEntry(
   player: Player,
 ) {
   private val score: Score
-  var value: Int = -1
-    private set
+  val value: Int
+    get() = score.score
+
 
   init {
     val obj = scoreboardManager.mainScoreboard.getObjective(statusType.name)
@@ -22,11 +23,9 @@ class StatusEntry(
 
   fun updateValue(newScore: Int) {
     score.score = newScore
-    value = newScore
   }
 
   fun setDefault() {
-    value = statusType.defaultValue
     score.score = statusType.defaultValue
   }
 }

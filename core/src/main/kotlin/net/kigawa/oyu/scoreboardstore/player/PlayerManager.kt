@@ -14,8 +14,8 @@ import org.bukkit.scheduler.BukkitScheduler
 @Kunit
 class PlayerManager(
   private val database: Database,
-  private val scoreboardStore: ScoreboardStore,
-  private val scheduler: BukkitScheduler,
+  scoreboardStore: ScoreboardStore,
+  scheduler: BukkitScheduler,
 ) : Listener {
   private val sessions = mutableListOf<PlayerSession>()
 
@@ -24,7 +24,7 @@ class PlayerManager(
       synchronized(sessions) {
         sessions.toMutableList()
       }.forEach(PlayerSession::applyStatus)
-    }, 20, 20)
+    }, 1, 1)
   }
 
   @EventHandler

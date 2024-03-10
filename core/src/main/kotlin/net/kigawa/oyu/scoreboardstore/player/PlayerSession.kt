@@ -15,6 +15,8 @@ class PlayerSession(
   private val maxHp = statusDatabase.getStatus(StatusType.MAX_HP)
   private val random = Random()
   fun damage(damage: Double) {
+    if (hp.value < 0) return
+
     var newHp = hp.value - if (random.nextBoolean()) floor(damage).toInt() else ceil(damage).toInt()
     if (newHp < 0) newHp = 0
 
@@ -23,6 +25,7 @@ class PlayerSession(
   }
 
   fun applyStatus() {
+    if (hp.value < 0) return
     if (player.health == 0.0) return
 
     val hpValue = hp.value.toDouble() / maxHp.value * 20
