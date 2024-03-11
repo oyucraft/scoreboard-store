@@ -5,5 +5,5 @@ enum class StatusType(
   val defaultValue: Int,
 ) {
   HP(1, 20),
-  MAX_HP(1, 20),
+  MAX_HP(2, 20),
 }
