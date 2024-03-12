@@ -25,6 +25,7 @@ class ScoreStoreCommand(
   private val database: Database,
   private val pluginMessages: PluginMessages,
   private val coroutines: Coroutines,
+  private val guiCommand: GuiCommand,
 ) : AbstractCommand(
   CommandAPICommand("score-store")
     .withPermission(CommandPermission.OP)
@@ -87,4 +88,7 @@ class ScoreStoreCommand(
         scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = count
       }
     })
+
+  @SubCommand
+  fun gui() = guiCommand.cmd()
 }

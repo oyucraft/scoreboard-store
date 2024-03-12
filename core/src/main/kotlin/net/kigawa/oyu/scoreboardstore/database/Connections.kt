@@ -3,7 +3,7 @@ package net.kigawa.oyu.scoreboardstore.database
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import net.kigawa.kutil.unitapi.annotation.Kunit
-import net.kigawa.oyu.scoreboardstore.ScoreboardStoreConfig
+import net.kigawa.oyu.scoreboardstore.config.ScoreboardStoreConfig
 import java.sql.Connection
 
 @Kunit

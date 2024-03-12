@@ -1,6 +1,7 @@
 package net.kigawa.oyu.scoreboardstore
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.config.ScoreboardStoreConfig
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

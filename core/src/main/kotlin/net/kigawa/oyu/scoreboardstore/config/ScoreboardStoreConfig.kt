@@ -1,4 +1,4 @@
-package net.kigawa.oyu.scoreboardstore
+package net.kigawa.oyu.scoreboardstore.config
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.util.config.Config
@@ -26,4 +26,7 @@ class ScoreboardStoreConfig : Config() {
 
   @ConfigValue
   val onQuit = listOf<String>()
+
+  @ConfigValue
+  val gui = mutableListOf(GuiConfig())
 }
