@@ -6,8 +6,8 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 
 class ConfigField(
-  private val config: Config,
-  private val member: KProperty1<out Config, *>,
+  private val config: ConfigObject,
+  private val member: KProperty1<out ConfigObject, *>,
   private val configName: ConfigValue,
 ) {
 

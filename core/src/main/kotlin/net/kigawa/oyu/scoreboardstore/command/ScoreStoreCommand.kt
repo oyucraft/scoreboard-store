@@ -8,10 +8,10 @@ import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.executors.CommandExecutor
+import net.kigawa.kutil.kutil.reflection.KutilReflect
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.database.Database
 import net.kigawa.oyu.scoreboardstore.pluginmessage.PluginMessages
-import net.kigawa.oyu.scoreboardstore.util.command.AbstractCommand
 import net.kigawa.oyu.scoreboardstore.util.command.SubCommand
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.command.CommandSender
@@ -26,10 +26,22 @@ class ScoreStoreCommand(
   private val pluginMessages: PluginMessages,
   private val coroutines: Coroutines,
   private val guiCommand: GuiCommand,
-) : AbstractCommand(
-  CommandAPICommand("score-store")
-    .withPermission(CommandPermission.OP)
 ) {
+  init {
+    val commandAPICommand =
+      CommandAPICommand("score-store")
+        .withPermission(CommandPermission.OP)
+    KutilReflect.getAllExitMethod(javaClass).forEach {
+      it.getAnnotation(SubCommand::class.java) ?: return@forEach
+      if (it.returnType != CommandAPICommand::class.java) return@forEach
+
+      it.isAccessible = true
+
+      commandAPICommand.withSubcommand(it.invoke(this) as CommandAPICommand)
+    }
+
+    commandAPICommand.register()
+  }
 
   @SubCommand
   fun save(): CommandAPICommand = CommandAPICommand("save")

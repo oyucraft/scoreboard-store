@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityRegainHealthEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scheduler.BukkitScheduler
@@ -51,10 +52,19 @@ class PlayerManager(
     val entity = event.entity
     if (entity !is Player) return
     synchronized(sessions) {
+      sessions.firstOrNull() { it.player == entity }
+    }?.damage(event)
+
+  }
+
+  @EventHandler
+  fun onRegan(event: EntityRegainHealthEvent) {
+    val entity = event.entity
+    if (entity !is Player) return
+    synchronized(sessions) {
       sessions.filter { it.player == entity }
     }.forEach {
-      it.damage(event.damage)
+      it.regen(event.amount)
     }
-    event.damage = 0.0
   }
 }

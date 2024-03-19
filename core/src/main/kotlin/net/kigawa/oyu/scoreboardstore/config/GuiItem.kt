@@ -1,17 +1,18 @@
 package net.kigawa.oyu.scoreboardstore.config
 
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigObject
 import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 
-class GuiItem {
+class GuiItem : ConfigObject {
   @ConfigValue
-  val id = ""
+  var id = ""
 
   @ConfigValue
-  val cmd: String? = null
+  var cmd: String? = null
 
   @ConfigValue
-  val column = 0
+  var column = 0
 
   @ConfigValue
-  val row = 0
+  var row = 0
 }

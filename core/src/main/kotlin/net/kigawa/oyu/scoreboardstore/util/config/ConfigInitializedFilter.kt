@@ -9,7 +9,7 @@ class ConfigInitializedFilter(
   
   
   override fun <T: Any> filter(obj: T, stack: InitStack): T {
-    if (obj !is Config) return obj
+    if (obj !is ConfigParent) return obj
     
     configManager.load(obj)
     configManager.save(obj)

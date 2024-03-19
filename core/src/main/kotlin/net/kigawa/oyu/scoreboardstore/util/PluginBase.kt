@@ -10,7 +10,7 @@ import net.kigawa.kutil.unitapi.registrar.ClassRegistrar
 import net.kigawa.kutil.unitapi.registrar.InstanceRegistrar
 import net.kigawa.kutil.unitapi.registrar.ResourceRegistrar
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
-import net.kigawa.oyu.scoreboardstore.util.config.Config
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigParent
 import net.kigawa.oyu.scoreboardstore.util.config.ConfigInitializedFilter
 import net.kigawa.oyu.scoreboardstore.util.config.ConfigManager
 import net.kigawa.oyu.scoreboardstore.util.config.ConfigUtil
@@ -56,7 +56,7 @@ abstract class PluginBase : JavaPlugin() {
     CommandAPI.onEnable()
 
     Bukkit.getScheduler().runTaskTimerAsynchronously(this, Runnable {
-      container.getUnitList(Config::class.java).forEach {
+      container.getUnitList(ConfigParent::class.java).forEach {
         it.save()
       }
     }, 5 * 60 * 1000, 5 * 60 * 1000)

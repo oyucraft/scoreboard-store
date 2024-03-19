@@ -13,20 +13,26 @@ class ConfigManager(
 ) {
 
   private val yaml = Yaml(CustomClassLoaderConstructor(plugin.pluginClassLoader, LoaderOptions()))
-  fun save(config: Config) {
+  fun save(config: ConfigParent) {
     createFile(config)
 
-    val data = mutableMapOf<String, Any?>()
-    configUtil.configFields(config).forEach {
-      data[it.name] = it.get()
-    }
-
+    val data = createYamlData(config)
     OutputStreamWriter(configUtil.file(config).outputStream()).use {
       yaml.dump(data, it)
     }
   }
 
-  fun load(config: Config) {
+  private fun createYamlData(obj: Any?): Any? {
+    if (obj is Iterable<*>) return obj.map { createYamlData(it) }
+    if (obj !is ConfigObject) return obj
+    val data = mutableMapOf<String, Any?>()
+    configUtil.configFields(obj).forEach {
+      data[it.name] = createYamlData(it.get())
+    }
+    return data
+  }
+
+  fun load(config: ConfigParent) {
     createFile(config)
 
     val data = InputStreamReader(configUtil.file(config).inputStream()).use {
@@ -38,7 +44,7 @@ class ConfigManager(
     }
   }
 
-  fun createFile(config: Config) {
+  fun createFile(config: ConfigParent) {
     configUtil.dir(config).mkdirs()
     configUtil.file(config).createNewFile()
   }

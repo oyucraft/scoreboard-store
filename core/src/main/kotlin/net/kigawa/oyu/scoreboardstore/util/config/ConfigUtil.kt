@@ -12,11 +12,11 @@ import kotlin.reflect.jvm.javaField
 
 class ConfigUtil(private val plugin: PluginBase) {
 
-  fun type(config: Config): KClass<out Config> {
+  fun type(config: ConfigObject): KClass<out ConfigObject> {
     return config::class
   }
 
-  fun fileName(config: Config): String {
+  fun fileName(config: ConfigParent): String {
     val name = type(config).findAnnotation<ConfigName>()?.name
     if (name != null) return name
 
@@ -25,18 +25,18 @@ class ConfigUtil(private val plugin: PluginBase) {
     ).toFormatStr(CaseFormat.KEBAB_CASE) + ".yml"
   }
 
-  fun dir(config: Config): File {
+  fun dir(config: ConfigParent): File {
     val path = type(config).findAnnotation<ConfigName>()?.dir ?: ""
     if (path != "") return File(path)
 
     return plugin.dataFolder
   }
 
-  fun file(config: Config): File {
+  fun file(config: ConfigParent): File {
     return File(dir(config), fileName(config))
   }
 
-  fun configFields(config: Config): List<ConfigField> {
+  fun configFields(config: ConfigObject): List<ConfigField> {
     return type(config).memberProperties.mapNotNull {
       val configName = it.javaField?.getAnnotation(ConfigValue::class.java) ?: return@mapNotNull null
       return@mapNotNull ConfigField(config, it, configName)

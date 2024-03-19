@@ -1,11 +1,11 @@
 package net.kigawa.oyu.scoreboardstore.config
 
+import net.kigawa.oyu.scoreboardstore.util.config.ConfigObject
 import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 
-class GuiConfig {
+class GuiConfig : ConfigObject{
   @ConfigValue
-  val name = "guiName"
-
+  var name = "guiName"
   @ConfigValue
-  val items = mutableListOf(GuiItem())
+  var items = mutableListOf(GuiItem())
 }

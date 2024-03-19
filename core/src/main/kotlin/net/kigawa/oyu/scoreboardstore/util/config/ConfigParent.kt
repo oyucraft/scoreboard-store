@@ -3,8 +3,8 @@ package net.kigawa.oyu.scoreboardstore.util.config
 import net.kigawa.kutil.unitapi.annotation.Inject
 
 
-abstract class Config {
-  
+abstract class ConfigParent : ConfigObject {
+
   @Inject
   private lateinit var configManager: ConfigManager
   fun save() {

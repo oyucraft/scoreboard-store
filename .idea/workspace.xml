@@ -9,15 +9,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="fix: status">
-      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/GuiCommand.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiConfig.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiItem.kt" afterDir="false" />
+    <list default="true" id="3e23afb8-23e7-45a4-a2f5-386e3eda7286" name="変更" comment="fix: bug">
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigObject.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/ScoreboardStoreConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreboardStoreConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/GuiCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/GuiCommand.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Connections.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Connections.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/GuiItem.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreboardStoreConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreboardStoreConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerSession.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerSession.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/PluginBase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/PluginBase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/Config.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigParent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigField.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigField.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigInitializedFilter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigInitializedFilter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/config/ConfigUtil.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +64,7 @@
       <list>
         <option value="Kotlin Enum" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Interface" />
       </list>
     </option>
   </component>
@@ -215,13 +223,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4" />
-      </set>
-    </attachedChunks>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="アプリケーションレベル" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="デフォルトタスク">
@@ -253,7 +254,8 @@
       <workItem from="1710054609327" duration="20000" />
       <workItem from="1710054646635" duration="13708000" />
       <workItem from="1710171629329" duration="1443000" />
-      <workItem from="1710214558906" duration="3623000" />
+      <workItem from="1710214558906" duration="3865000" />
+      <workItem from="1710770521016" duration="7657000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -335,7 +337,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710167945845</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="wip">
+      <option name="closed" value="true" />
+      <created>1710230539568</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1710230539568</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -372,7 +382,9 @@
     <MESSAGE value="add: damage system" />
     <MESSAGE value="add: scoreboard interface" />
     <MESSAGE value="fix: status" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: status" />
+    <MESSAGE value="wip" />
+    <MESSAGE value="fix: bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: bug" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
