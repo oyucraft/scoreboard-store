@@ -1,0 +1,71 @@
+services:
+  mc:
+    image: itzg/minecraft-server:java17
+    container_name: mc
+    volumes:
+      - type: bind
+        source: ./data-mc
+        target: /data
+    environment:
+      TYPE: "SPIGOT"
+      EULA: "true"
+      MAX_MEMORY: 4G
+      JVM_XX_OPTS: ""
+      VERSION: 1.20.2
+      MODS_FILE: /data/plugins.txt
+      SPIGET_RESOURCES: "1997"
+      REMOVE_OLD_MODS: "false"
+      #      REMOVE_OLD_MODS_INCLUDE: "*.jar"
+      REMOVE_OLD_MODS_EXCLUDE: ""
+      REMOVE_OLD_MODS_DEPTH: "1"
+      SYNC_SKIP_NEWER_IN_DESTINATION: "true"
+    ports: []
+    restart: no
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: '3'
+    depends_on: [ mariadb ]
+    links:
+      - mariadb:mariadb
+  bungee:
+    #     https://github.com/itzg/docker-bungeecord
+    image: itzg/bungeecord
+    container_name: bungee
+    volumes:
+      - type: bind
+        source: ./data-bungee
+        target: /data
+    environment:
+      MAX_MEMORY: "1G"
+      JVM_XX_OPTS: ""
+    ports:
+      - 25565:25577
+    restart: no
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: '3'
+    depends_on: [ mc ]
+    links:
+      - mc:mc
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "0"
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_DATABASE: "oneNation"
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/mysql
+    ports:
+      - 3307:3306
+volumes:
+  db-data:
+networks:
+  default:
+    name: local-network

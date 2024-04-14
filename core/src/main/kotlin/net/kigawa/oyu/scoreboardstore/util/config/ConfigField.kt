@@ -1,33 +1,32 @@
 package net.kigawa.oyu.scoreboardstore.util.config
 
 import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
-import kotlin.reflect.KProperty1
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
+import java.lang.reflect.Field
 
 class ConfigField(
-  private val config: Config,
-  private val member: KProperty1<out Config, *>,
-  private val configName: ConfigValue,
+    private val config: Config,
+    private val field: Field,
+    private val configName: ConfigValue,
 ) {
 
-  val name: String
-    get() {
-      return if (configName.name == "") this.member.name else configName.name
+    val name: String
+        get() {
+            return if (configName.name == "") this.field.name else configName.name
+        }
+    val type: Class<Any?>
+        get() {
+            @Suppress("UNCHECKED_CAST")
+            return this.field.type as Class<Any?>
+        }
+
+
+    fun get(): Any? {
+        field.isAccessible = true
+        return field.get(config)
     }
 
-
-  fun get(): Any? {
-    member.isAccessible = true
-    return member.javaField?.get(config)
-  }
-
-  fun set(value: Any?) {
-    member.isAccessible = true
-    if (value == null) {
-      if (!member.returnType.isMarkedNullable) return
+    fun set(value: Any?) {
+        field.isAccessible = true
+        return field.set(config, value)
     }
-
-    member.javaField?.set(config, value)
-  }
 }

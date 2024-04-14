@@ -1,6 +1,7 @@
 package net.kigawa.oyu.scoreboardstore
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.config.ScoreboardStoreConfig
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -9,8 +10,8 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 @Kunit
 class EventListener(
-  private val scoreboardStoreConfig: ScoreboardStoreConfig,
-  private val server: Server,
+    private val scoreboardStoreConfig: ScoreboardStoreConfig,
+    private val server: Server,
 ) : Listener {
   @EventHandler
   fun join(event: PlayerJoinEvent) {

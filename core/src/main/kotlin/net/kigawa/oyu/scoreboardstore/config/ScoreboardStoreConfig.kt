@@ -1,4 +1,4 @@
-package net.kigawa.oyu.scoreboardstore
+package net.kigawa.oyu.scoreboardstore.config
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.util.config.Config
