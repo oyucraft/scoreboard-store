@@ -1,0 +1,11 @@
+dbHost: score-store-mariadb
+dbName: score-store
+dbPass: root
+dbPort: 3306
+dbUser: root
+gui:
+- items:
+  - {cmd: null, column: 0, id: '', row: 0}
+  name: guiName
+onJoin: []
+onQuit: []

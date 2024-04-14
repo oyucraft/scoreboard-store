@@ -1,0 +1,73 @@
+services:
+  mc:
+    # https://docker-minecraft-server.readthedocs.io/en/latest/
+    image: itzg/minecraft-server:java17
+    container_name: score-store-mc
+    volumes:
+      - type: bind
+        source: ./data-mc
+        target: /data
+    environment:
+      TYPE: "SPIGOT"
+      EULA: "true"
+      MAX_MEMORY: 4G
+      JVM_XX_OPTS: ""
+      VERSION: 1.20.2
+      MODS_FILE: /data/plugins.txt
+      SPIGET_RESOURCES: ""
+      REMOVE_OLD_MODS: "false"
+      #      REMOVE_OLD_MODS_INCLUDE: "*.jar"
+      REMOVE_OLD_MODS_EXCLUDE: ""
+      REMOVE_OLD_MODS_DEPTH: "1"
+      SYNC_SKIP_NEWER_IN_DESTINATION: "true"
+      ONLINE_MODE: "false"
+    ports: [ ]
+    restart: no
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: '3'
+    depends_on: [ mariadb ]
+    links:
+      - mariadb:score-store-mariadb
+  bungee:
+    #     https://github.com/itzg/docker-bungeecord
+    image: itzg/bungeecord
+    container_name: score-store-bungee
+    volumes:
+      - type: bind
+        source: ./data-bungee
+        target: /server
+    environment:
+      MAX_MEMORY: "1G"
+      JVM_XX_OPTS: ""
+    ports:
+      - 25565:25577
+    restart: no
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: '3'
+    depends_on: [ mc ]
+    links:
+      - mc:score-store-mc
+  mariadb:
+    image: mariadb
+    container_name: score-store-mariadb
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "0"
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_DATABASE: "score-store"
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/mysql
+    ports:
+      - 3307:3306
+volumes:
+  db-data:
+networks:
+  default:
+    name: local-network
