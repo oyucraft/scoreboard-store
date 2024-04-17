@@ -1,11 +1,10 @@
-dbHost: score-store-mariadb
-dbName: score-store
-dbPass: root
-dbPort: 3306
-dbUser: root
+cmd:
+  onJoin: [ ]
+  onQuit: [ ]
+  onReady: [ ]
+db: { host: localhost, name: score_store, pass: root, port: 3306, user: root }
 gui:
-- items:
-  - {cmd: null, column: 0, id: '', row: 0}
-  name: guiName
-onJoin: []
-onQuit: []
+  - items:
+      - { cmd: null, column: 0, id: '', row: 0 }
+    name: guiName
+saveScoreboard: [ ]

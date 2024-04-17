@@ -2,7 +2,7 @@ package net.kigawa.oyu.scoreboardstore.player
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.ScoreboardStore
-import net.kigawa.oyu.scoreboardstore.database.Database
+import net.kigawa.oyu.scoreboardstore.data.DatabaseListener
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitScheduler
 
 @Kunit
 class PlayerManager(
-  private val database: Database,
+  private val databaseListener: DatabaseListener,
   scoreboardStore: ScoreboardStore,
   scheduler: BukkitScheduler,
 ) : Listener {
@@ -30,7 +30,7 @@ class PlayerManager(
 
   @EventHandler
   fun onJoin(event: PlayerJoinEvent) {
-    val database = database.getStatusDatabase(event.player)
+    val database = databaseListener.getStatusDatabase(event.player)
     synchronized(sessions) {
       sessions.add(
         PlayerSession(

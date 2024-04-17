@@ -1,4 +1,4 @@
-package net.kigawa.oyu.scoreboardstore.database
+package net.kigawa.oyu.scoreboardstore.data
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -15,10 +15,10 @@ class Connections(
   init {
     val config = HikariConfig()
     config.driverClassName = "com.mysql.jdbc.Driver"
-    config.jdbcUrl = "jdbc:mysql://${pluginConfig.dbHost}:${pluginConfig.dbPort}/${pluginConfig.dbName}"
+    config.jdbcUrl = "jdbc:mysql://${pluginConfig.db.host}:${pluginConfig.db.port}/${pluginConfig.db.name}"
 
-    config.addDataSourceProperty("user", pluginConfig.dbUser)
-    config.addDataSourceProperty("password", pluginConfig.dbPass)
+    config.addDataSourceProperty("user", pluginConfig.db.user)
+    config.addDataSourceProperty("password", pluginConfig.db.pass)
     config.addDataSourceProperty("cachePrepStmts", "true")
     config.addDataSourceProperty("prepStmtCacheSize", "250")
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")

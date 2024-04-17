@@ -23,18 +23,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="wip">
-      <change afterPath="$PROJECT_DIR$/.idea/forwardedPorts.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="Add new server subcommand and update code formatting">
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/DatabaseListener.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/player/PlayerDatabase.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/player/PlayerModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/forwardedPorts.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/forwardedPorts.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventCmdListener.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Connections.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Connections.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/Database.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/ScoreDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerScore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/database/PlayerScore.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-bungee/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/data-bungee/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-mc/plugins/scoreboard-store/scoreboard-store.yml" beforeDir="false" afterPath="$PROJECT_DIR$/data-mc/plugins/scoreboard-store/scoreboard-store.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,6 +82,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -86,12 +98,12 @@
     &quot;assignee&quot;: &quot;kigawa01&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/oyucraft/scoreboard-store.git",
-    "accountId": "8a3557e8-ea02-4747-be1f-dab395c09d54"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/oyucraft/scoreboard-store.git&quot;,
+    &quot;accountId&quot;: &quot;8a3557e8-ea02-4747-be1f-dab395c09d54&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -136,8 +148,8 @@
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
       <window_info id="Learn" show_stripe_button="false" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.21098968" />
-      <window_info active="true" id="Commit" order="1" visible="true" weight="0.24810427" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16692698" />
+      <window_info id="Commit" order="1" weight="0.22440758" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
@@ -146,17 +158,19 @@
       <window_info anchor="bottom" id="Find Mixins" />
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" />
-      <window_info anchor="bottom" id="Version Control" order="0" weight="0.2815315" />
+      <window_info anchor="bottom" id="Find" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.28176597" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="3" weight="0.32968602" />
-      <window_info anchor="bottom" id="Build" order="4" weight="0.32968602" />
-      <window_info anchor="bottom" id="Services" order="5" weight="0.29543293" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.3298636" />
+      <window_info anchor="bottom" id="Build" order="4" weight="0.2437186" />
+      <window_info anchor="bottom" id="Messages" order="5" weight="0.33018017" />
+      <window_info active="true" anchor="bottom" id="Services" order="6" visible="true" weight="0.2954056" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
       <window_info anchor="right" id="documentation.v2" side_tool="true" />
       <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
-      <window_info active="true" anchor="right" id="AIAssistant" order="1" visible="true" weight="0.25" />
+      <window_info anchor="right" id="AIAssistant" order="1" weight="0.25" />
       <window_info anchor="right" id="Database" order="2" weight="0.2498482" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
       <window_info anchor="right" id="Maven" order="4" weight="0.25" />
@@ -166,6 +180,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\project\dev\oyu\scoreboard-store" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="net.kigawa.oyu.scoreboardstore.database.player" />
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml: Compose デプロイ">
@@ -236,7 +253,8 @@
       <updated>1713031936827</updated>
       <workItem from="1713031938019" duration="3104000" />
       <workItem from="1713106197680" duration="3469000" />
-      <workItem from="1713344861624" duration="672000" />
+      <workItem from="1713344861624" duration="7545000" />
+      <workItem from="1713360696092" duration="2096000" />
     </task>
     <task id="LOCAL-00001" summary="wip">
       <option name="closed" value="true" />
@@ -246,7 +264,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713071180177</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add new server subcommand and update code formatting">
+      <option name="closed" value="true" />
+      <created>1713346789407</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1713346789407</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,7 +291,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="wip" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip" />
+    <MESSAGE value="Add new server subcommand and update code formatting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add new server subcommand and update code formatting" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
