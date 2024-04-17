@@ -23,10 +23,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="Refactor database handling and add new files">
-      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerManager.kt" afterDir="false" />
+    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="Add PlayerManager and update PlayerJoinEvent handling">
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreModels.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/DatabaseListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/DatabaseListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/PlayerScore.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/ScoreDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/concurrent/Coroutines.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util/concurrent/Coroutines.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,8 +142,8 @@
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
       <window_info id="Learn" show_stripe_button="false" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16692698" />
-      <window_info id="Commit" order="1" weight="0.22432643" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.16692698" />
+      <window_info active="true" id="Commit" order="1" visible="true" weight="0.22432643" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
@@ -151,7 +158,7 @@
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.3298636" />
       <window_info anchor="bottom" id="Build" order="4" weight="0.2437186" />
       <window_info anchor="bottom" id="Messages" order="5" weight="0.33018017" />
-      <window_info anchor="bottom" id="Services" order="6" weight="0.2954056" />
+      <window_info active="true" anchor="bottom" id="Services" order="6" visible="true" weight="0.2954056" />
       <window_info anchor="bottom" id="Find" order="6" weight="0.3298636" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
       <window_info anchor="right" id="documentation.v2" side_tool="true" />
@@ -169,6 +176,7 @@
       <recent name="D:\project\dev\oyu\scoreboard-store" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="net.kigawa.oyu.scoreboardstore.data.score" />
       <recent name="net.kigawa.oyu.scoreboardstore.database.player" />
     </key>
   </component>
@@ -241,7 +249,7 @@
       <workItem from="1713031938019" duration="3104000" />
       <workItem from="1713106197680" duration="3469000" />
       <workItem from="1713344861624" duration="7545000" />
-      <workItem from="1713360696092" duration="3165000" />
+      <workItem from="1713360696092" duration="7043000" />
     </task>
     <task id="LOCAL-00001" summary="wip">
       <option name="closed" value="true" />
@@ -267,7 +275,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713365892480</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Add PlayerManager and update PlayerJoinEvent handling">
+      <option name="closed" value="true" />
+      <created>1713367469411</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713367469411</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,7 +304,8 @@
     <MESSAGE value="wip" />
     <MESSAGE value="Add new server subcommand and update code formatting" />
     <MESSAGE value="Refactor database handling and add new files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor database handling and add new files" />
+    <MESSAGE value="Add PlayerManager and update PlayerJoinEvent handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add PlayerManager and update PlayerJoinEvent handling" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

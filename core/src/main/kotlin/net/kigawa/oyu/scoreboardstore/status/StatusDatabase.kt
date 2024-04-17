@@ -2,7 +2,7 @@ package net.kigawa.oyu.scoreboardstore.status
 
 import kotlinx.coroutines.runBlocking
 import net.kigawa.oyu.scoreboardstore.data.Connections
-import net.kigawa.oyu.scoreboardstore.data.ScoreDatabase
+import net.kigawa.oyu.scoreboardstore.data.score.ScoreDatabase
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.ScoreboardManager

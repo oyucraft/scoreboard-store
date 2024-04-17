@@ -26,7 +26,7 @@ class PlayerDatabase(
         }
     }
 
-    fun getPlayer(player: Player) = coroutines.asyncIo {
+    suspend fun getPlayer(player: Player) = coroutines.withIo {
         connections.get().use con@{ con ->
             con.byUuid(player.uniqueId) ?: con.insert(player.uniqueId)
         }

@@ -11,12 +11,13 @@ class PlayerManager(
 ) {
     private val players = MutableStateFlow(listOf<PlayerModel>())
 
-    suspend fun load(player: Player) = playerDatabase.getPlayer(player).await().let {
+    suspend fun load(player: Player) = playerDatabase.getPlayer(player).let {
         players.updateAndGet {
             it.plus(it)
         }
     }
-    fun unload(player: Player)  = players.updateAndGet { list ->
+
+    fun unload(player: Player) = players.updateAndGet { list ->
         list.filter { it.uuid != player.uniqueId }
     }
 }

@@ -2,6 +2,7 @@ package net.kigawa.oyu.scoreboardstore.data
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerManager
+import net.kigawa.oyu.scoreboardstore.data.score.ScoreDatabase
 import net.kigawa.oyu.scoreboardstore.status.StatusDatabase
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
