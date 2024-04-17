@@ -13,16 +13,15 @@ class EventListener(
 ) : Listener {
   @EventHandler
   fun join(event: PlayerJoinEvent) {
-    scoreboardStoreConfig.onJoin.forEach {
+    scoreboardStoreConfig.cmd.onJoin.forEach {
       event.player.performCommand(it)
     }
   }
 
   @EventHandler
   fun quit(event: PlayerQuitEvent) {
-    scoreboardStoreConfig.onQuit.forEach {
+    scoreboardStoreConfig.cmd.onQuit.forEach {
       event.player.performCommand(it)
     }
   }
-
 }

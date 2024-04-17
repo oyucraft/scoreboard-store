@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AIAssistantCustomInstructionsStorage">
+    <option name="instructions">
+      <map>
+        <entry key="AIAssistant.VCS.GenerateCommitMessage">
+          <value>
+            <AIAssistantStoredInstruction>
+              <option name="actionId" value="AIAssistant.VCS.GenerateCommitMessage" />
+              <option name="content" value="Avoid overly verbose descriptions or unnecessary details.&#10;A short sentence in imperative form, no more than 50 characters long.&#10;" />
+            </AIAssistantStoredInstruction>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
       <artifact name="scoreboard-store.core:jar" />
@@ -9,11 +23,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="wip">
-      <change afterPath="$PROJECT_DIR$/data-bungee/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data-mc/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data-mc/plugins.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+    <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="add docker server runner">
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/CmdConfig.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/DatabaseConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/EventListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreboardStoreConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreboardStoreConfig.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +72,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -79,35 +102,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.docker-compose.yml: Compose デプロイ.executor": "Run",
-    "Gradle.scoreboard-store [shadowJar].executor": "Run",
-    "Gradle.ソースのダウンロード.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/project/dev/oyu/scoreboard-store/core/src/main/resources",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "アーティファクト",
-    "project.structure.proportion": "0.15990058",
-    "project.structure.side.proportion": "0.3620489",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.docker-compose.yml: Compose デプロイ.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.scoreboard-store [shadowJar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ソースのダウンロード.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/project/dev/oyu/scoreboard-store/core/src/main/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;アーティファクト&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15990058&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.3620489&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AIAssistantPromptsLibrary&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mariadb"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mariadb&quot;
     ],
-    "kotlin-gradle-user-dirs": [
-      "C:\\Users\\kigaw\\.gradle"
+    &quot;kotlin-gradle-user-dirs&quot;: [
+      &quot;C:\\Users\\kigaw\\.gradle&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\project\dev\oyu\scoreboard-store" />
@@ -148,7 +172,9 @@
       </method>
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <list>
@@ -157,7 +183,6 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yml: Compose デプロイ" />
         <item itemvalue="Gradle.scoreboard-store [shadowJar]" />
       </list>
     </recent_temporary>
@@ -179,7 +204,7 @@
       <option name="presentableId" value="Default" />
       <updated>1713031936827</updated>
       <workItem from="1713031938019" duration="3104000" />
-      <workItem from="1713106197680" duration="3469000" />
+      <workItem from="1713106197680" duration="7954000" />
     </task>
     <task id="LOCAL-00001" summary="wip">
       <option name="closed" value="true" />
@@ -189,7 +214,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713071180177</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add docker server runner">
+      <option name="closed" value="true" />
+      <created>1713110003405</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1713110003405</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -208,6 +241,12 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="wip" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip" />
+    <MESSAGE value="Add new data source configuration file&#10;&#10;This commit adds a new .xml file for the data source configuration. It covers a diverse range of character sets and collations, significantly expanding the database's ability to handle different languages and character encodings. The file is specifically tailored for MariaDB and follows their format and conventions." />
+    <MESSAGE value="add docker server runner" />
+    <option name="LAST_COMMIT_MESSAGE" value="add docker server runner" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

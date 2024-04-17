@@ -7,25 +7,13 @@ import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 @Kunit
 class ScoreboardStoreConfig : ConfigParent() {
   @ConfigValue
-  val dbHost = "localhost"
+  val db = DatabaseConfig()
 
   @ConfigValue
-  val dbPort = 3306
+  val saveScoreboard = listOf<String>()
 
   @ConfigValue
-  val dbUser = "root"
-
-  @ConfigValue
-  val dbPass = "root"
-
-  @ConfigValue
-  val dbName = "score_store"
-
-  @ConfigValue
-  val onJoin = listOf<String>()
-
-  @ConfigValue
-  val onQuit = listOf<String>()
+  val cmd = CmdConfig()
 
   @ConfigValue
   val gui = mutableListOf(GuiConfig())
