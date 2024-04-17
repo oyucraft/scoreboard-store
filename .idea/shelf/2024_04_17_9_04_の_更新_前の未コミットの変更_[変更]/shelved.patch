@@ -1,0 +1,706 @@
+Index: core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package net.kigawa.oyu.scoreboardstore.command\n\nimport dev.jorel.commandapi.CommandAPICommand\nimport dev.jorel.commandapi.CommandPermission\nimport dev.jorel.commandapi.arguments.ArgumentSuggestions\nimport dev.jorel.commandapi.arguments.IntegerArgument\nimport dev.jorel.commandapi.arguments.PlayerArgument\nimport dev.jorel.commandapi.arguments.StringArgument\nimport dev.jorel.commandapi.executors.CommandArguments\nimport dev.jorel.commandapi.executors.CommandExecutor\nimport net.kigawa.kutil.kutil.reflection.KutilReflect\nimport net.kigawa.kutil.unitapi.annotation.Kunit\nimport net.kigawa.oyu.scoreboardstore.database.Database\nimport net.kigawa.oyu.scoreboardstore.pluginmessage.PluginMessages\nimport net.kigawa.oyu.scoreboardstore.util.command.SubCommand\nimport net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines\nimport org.bukkit.command.CommandSender\nimport org.bukkit.entity.Player\nimport org.bukkit.scoreboard.ScoreboardManager\nimport java.util.concurrent.CompletableFuture\n\n@Kunit\nclass ScoreStoreCommand(\n  private val scoreboardManager: ScoreboardManager,\n  private val database: Database,\n  private val pluginMessages: PluginMessages,\n  private val coroutines: Coroutines,\n  private val guiCommand: GuiCommand,\n) {\n  init {\n    val commandAPICommand =\n      CommandAPICommand(\"score-store\")\n        .withPermission(CommandPermission.OP)\n    KutilReflect.getAllExitMethod(javaClass).forEach {\n      it.getAnnotation(SubCommand::class.java) ?: return@forEach\n      if (it.returnType != CommandAPICommand::class.java) return@forEach\n\n      it.isAccessible = true\n\n      commandAPICommand.withSubcommand(it.invoke(this) as CommandAPICommand)\n    }\n\n    commandAPICommand.register()\n  }\n\n  @SubCommand\n  fun save(): CommandAPICommand = CommandAPICommand(\"save\")\n    .withArguments(PlayerArgument(\"player\"))\n    .withArguments(StringArgument(\"scoreboard name\").replaceSuggestions(ArgumentSuggestions.stringsAsync {\n      CompletableFuture.supplyAsync {\n        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {\n          it.name\n        }.toTypedArray()\n      }\n    }))\n    .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->\n      val player = commandArguments.get(\"player\") as Player\n      val key = commandArguments.get(\"scoreboard name\") as String\n      database.getPlayerDatabase(player).save(key)\n    })\n\n  @SubCommand\n  fun load(): CommandAPICommand = CommandAPICommand(\"load\")\n    .withArguments(PlayerArgument(\"player\"))\n    .withArguments(IntegerArgument(\"default value\"))\n    .withArguments(StringArgument(\"scoreboard name\").replaceSuggestions(ArgumentSuggestions.stringsAsync {\n      CompletableFuture.supplyAsync {\n        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {\n          it.name\n        }.toTypedArray()\n      }\n    }))\n    .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->\n      val player = commandArguments.get(\"player\") as Player\n      val key = commandArguments.get(\"scoreboard name\") as String\n      val defaultValue = commandArguments.get(\"default value\") as Int\n      database.getPlayerDatabase(player).load(key, defaultValue)\n    })\n\n  @SubCommand\n  fun playerCount(): CommandAPICommand = CommandAPICommand(\"player-count\")\n    .withArguments(PlayerArgument(\"player\"))\n    .withArguments(StringArgument(\"scoreboard name\").replaceSuggestions(ArgumentSuggestions.stringsAsync {\n      CompletableFuture.supplyAsync {\n        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {\n          it.name\n        }.toTypedArray()\n      }\n    }))\n    .withArguments(StringArgument(\"server name\"))\n    .executes(CommandExecutor { _, commandArguments ->\n      val scoreBoard = commandArguments.get(\"scoreboard name\") as String\n      val serverName = commandArguments.get(\"server name\") as String\n      val player = commandArguments.get(\"player\") as Player\n\n      scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = -1\n      coroutines.launchDefault {\n        val count = pluginMessages.getPlayerCount(player, serverName).await()\n        println(count)\n        scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = count\n      }\n    })\n\n  @SubCommand\n  fun gui() = guiCommand.cmd()\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt b/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt
+--- a/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt	(date 1713273581396)
+@@ -21,86 +21,99 @@
+ 
+ @Kunit
+ class ScoreStoreCommand(
+-  private val scoreboardManager: ScoreboardManager,
+-  private val database: Database,
+-  private val pluginMessages: PluginMessages,
+-  private val coroutines: Coroutines,
+-  private val guiCommand: GuiCommand,
++    private val scoreboardManager: ScoreboardManager,
++    private val database: Database,
++    private val pluginMessages: PluginMessages,
++    private val coroutines: Coroutines,
++    private val guiCommand: GuiCommand,
+ ) {
+-  init {
+-    val commandAPICommand =
+-      CommandAPICommand("score-store")
+-        .withPermission(CommandPermission.OP)
+-    KutilReflect.getAllExitMethod(javaClass).forEach {
+-      it.getAnnotation(SubCommand::class.java) ?: return@forEach
+-      if (it.returnType != CommandAPICommand::class.java) return@forEach
++    init {
++        val commandAPICommand =
++            CommandAPICommand("score-store")
++                .withPermission(CommandPermission.OP)
++        KutilReflect.getAllExitMethod(javaClass).forEach {
++            it.getAnnotation(SubCommand::class.java) ?: return@forEach
++            if (it.returnType != CommandAPICommand::class.java) return@forEach
+ 
+-      it.isAccessible = true
++            it.isAccessible = true
+ 
+-      commandAPICommand.withSubcommand(it.invoke(this) as CommandAPICommand)
+-    }
++            commandAPICommand.withSubcommand(it.invoke(this) as CommandAPICommand)
++        }
+ 
+-    commandAPICommand.register()
+-  }
++        commandAPICommand.register()
++    }
+ 
+-  @SubCommand
+-  fun save(): CommandAPICommand = CommandAPICommand("save")
+-    .withArguments(PlayerArgument("player"))
+-    .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
+-      CompletableFuture.supplyAsync {
+-        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
+-          it.name
+-        }.toTypedArray()
+-      }
+-    }))
+-    .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->
+-      val player = commandArguments.get("player") as Player
+-      val key = commandArguments.get("scoreboard name") as String
+-      database.getPlayerDatabase(player).save(key)
+-    })
++    @SubCommand
++    fun save(): CommandAPICommand = CommandAPICommand("save")
++        .withArguments(PlayerArgument("player"))
++        .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
++            CompletableFuture.supplyAsync {
++                return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
++                    it.name
++                }.toTypedArray()
++            }
++        }))
++        .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->
++            val player = commandArguments.get("player") as Player
++            val key = commandArguments.get("scoreboard name") as String
++            database.getPlayerDatabase(player).save(key)
++        })
+ 
+-  @SubCommand
+-  fun load(): CommandAPICommand = CommandAPICommand("load")
+-    .withArguments(PlayerArgument("player"))
+-    .withArguments(IntegerArgument("default value"))
+-    .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
+-      CompletableFuture.supplyAsync {
+-        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
+-          it.name
+-        }.toTypedArray()
+-      }
+-    }))
+-    .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->
+-      val player = commandArguments.get("player") as Player
+-      val key = commandArguments.get("scoreboard name") as String
+-      val defaultValue = commandArguments.get("default value") as Int
+-      database.getPlayerDatabase(player).load(key, defaultValue)
+-    })
++    @SubCommand
++    fun load(): CommandAPICommand = CommandAPICommand("load")
++        .withArguments(PlayerArgument("player"))
++        .withArguments(IntegerArgument("default value"))
++        .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
++            CompletableFuture.supplyAsync {
++                return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
++                    it.name
++                }.toTypedArray()
++            }
++        }))
++        .executes(CommandExecutor { _: CommandSender, commandArguments: CommandArguments ->
++            val player = commandArguments.get("player") as Player
++            val key = commandArguments.get("scoreboard name") as String
++            val defaultValue = commandArguments.get("default value") as Int
++            database.getPlayerDatabase(player).load(key, defaultValue)
++        })
+ 
+-  @SubCommand
+-  fun playerCount(): CommandAPICommand = CommandAPICommand("player-count")
+-    .withArguments(PlayerArgument("player"))
+-    .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
+-      CompletableFuture.supplyAsync {
+-        return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
+-          it.name
+-        }.toTypedArray()
+-      }
+-    }))
+-    .withArguments(StringArgument("server name"))
+-    .executes(CommandExecutor { _, commandArguments ->
+-      val scoreBoard = commandArguments.get("scoreboard name") as String
+-      val serverName = commandArguments.get("server name") as String
+-      val player = commandArguments.get("player") as Player
++    @SubCommand
++    fun playerCount(): CommandAPICommand = CommandAPICommand("player-count")
++        .withArguments(PlayerArgument("player"))
++        .withArguments(StringArgument("scoreboard name").replaceSuggestions(ArgumentSuggestions.stringsAsync {
++            CompletableFuture.supplyAsync {
++                return@supplyAsync scoreboardManager.mainScoreboard.objectives.map {
++                    it.name
++                }.toTypedArray()
++            }
++        }))
++        .withArguments(StringArgument("server name"))
++        .executes(CommandExecutor { _, commandArguments ->
++            val scoreBoard = commandArguments.get("scoreboard name") as String
++            val serverName = commandArguments.get("server name") as String
++            val player = commandArguments.get("player") as Player
+ 
+-      scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = -1
+-      coroutines.launchDefault {
+-        val count = pluginMessages.getPlayerCount(player, serverName).await()
+-        println(count)
+-        scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = count
+-      }
+-    })
++            scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == scoreBoard }.score = -1
++            coroutines.launchDefault {
++                val count = pluginMessages.getPlayerCount(player, serverName).await()
++                scoreboardManager.mainScoreboard.getScores(player.name)
++                    .first { it.objective.name == scoreBoard }.score = count
++            }
++        })
++
++    @SubCommand
++    fun server(): CommandAPICommand = CommandAPICommand("player-count")
++        .withArguments(PlayerArgument("player"))
++        .withArguments(StringArgument("server name"))
++        .executes(CommandExecutor { _, commandArguments ->
++            val serverName = commandArguments.get("server name") as String
++            val player = commandArguments.get("player") as Player
++
++            coroutines.launchDefault {
++                pluginMessages.connectServer(player, serverName).await()
++            }
++        })
+ 
+-  @SubCommand
+-  fun gui() = guiCommand.cmd()
++    @SubCommand
++    fun gui() = guiCommand.cmd()
+ }
+\ No newline at end of file
+Index: .idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<dataSource name=\"@localhost [2]\">\n  <database-model serializer=\"dbm\" dbms=\"MARIADB\" family-id=\"MARIADB\" format-version=\"4.52\">\n    <root id=\"1\">\n      <DefaultCasing>exact</DefaultCasing>\n      <DefaultEngine>InnoDB</DefaultEngine>\n      <Grants>|root||root||ALTER|G\n|root||root|localhost|ALTER|G\n|root||root||ALTER ROUTINE|G\n|root||root|localhost|ALTER ROUTINE|G\n|root||root||BINLOG ADMIN|G\n|root||root|localhost|BINLOG ADMIN|G\n|root||root||BINLOG MONITOR|G\n|root||root|localhost|BINLOG MONITOR|G\n|root||root||BINLOG REPLAY|G\n|root||root|localhost|BINLOG REPLAY|G\n|root||root||CONNECTION ADMIN|G\n|root||root|localhost|CONNECTION ADMIN|G\n|root||root||CREATE|G\n|root||root|localhost|CREATE|G\n|root||root||CREATE ROUTINE|G\n|root||root|localhost|CREATE ROUTINE|G\n|root||root||CREATE TABLESPACE|G\n|root||root|localhost|CREATE TABLESPACE|G\n|root||root||CREATE TEMPORARY TABLES|G\n|root||root|localhost|CREATE TEMPORARY TABLES|G\n|root||root||CREATE USER|G\n|root||root|localhost|CREATE USER|G\n|root||root||CREATE VIEW|G\n|root||root|localhost|CREATE VIEW|G\n|root||root||DELETE|G\n|root||root|localhost|DELETE|G\n|root||root||DELETE HISTORY|G\n|root||root|localhost|DELETE HISTORY|G\n|root||root||DROP|G\n|root||root|localhost|DROP|G\n|root||root||EVENT|G\n|root||root|localhost|EVENT|G\n|root||root||EXECUTE|G\n|root||root|localhost|EXECUTE|G\n|root||root||FEDERATED ADMIN|G\n|root||root|localhost|FEDERATED ADMIN|G\n|root||root||FILE|G\n|root||root|localhost|FILE|G\n|root||root||INDEX|G\n|root||root|localhost|INDEX|G\n|root||root||INSERT|G\n|root||root|localhost|INSERT|G\n|root||root||LOCK TABLES|G\n|root||root|localhost|LOCK TABLES|G\n|root||root||PROCESS|G\n|root||root|localhost|PROCESS|G\n|root||root||READ_ONLY ADMIN|G\n|root||root|localhost|READ_ONLY ADMIN|G\n|root||root||REFERENCES|G\n|root||root|localhost|REFERENCES|G\n|root||root||RELOAD|G\n|root||root|localhost|RELOAD|G\n|root||root||REPLICATION MASTER ADMIN|G\n|root||root|localhost|REPLICATION MASTER ADMIN|G\n|root||root||REPLICATION SLAVE|G\n|root||root|localhost|REPLICATION SLAVE|G\n|root||root||REPLICATION SLAVE ADMIN|G\n|root||root|localhost|REPLICATION SLAVE ADMIN|G\n|root||root||SELECT|G\n|root||root|localhost|SELECT|G\n|root||root||SET USER|G\n|root||root|localhost|SET USER|G\n|root||root||SHOW CREATE ROUTINE|G\n|root||root|localhost|SHOW CREATE ROUTINE|G\n|root||root||SHOW DATABASES|G\n|root||root|localhost|SHOW DATABASES|G\n|root||root||SHOW VIEW|G\n|root||root|localhost|SHOW VIEW|G\n|root||root||SHUTDOWN|G\n|root||root|localhost|SHUTDOWN|G\n|root||root||SLAVE MONITOR|G\n|root||root|localhost|SLAVE MONITOR|G\n|root||root||SUPER|G\n|root||root|localhost|SUPER|G\n|root||root||TRIGGER|G\n|root||root|localhost|TRIGGER|G\n|root||root||UPDATE|G\n|root||root|localhost|UPDATE|G\n|root||root||grant option|G\n|root||root|localhost|grant option|G</Grants>\n      <ServerVersion>11.3.2</ServerVersion>\n    </root>\n    <collation id=\"2\" parent=\"1\" name=\"armscii8_bin\">\n      <Charset>armscii8</Charset>\n    </collation>\n    <collation id=\"3\" parent=\"1\" name=\"armscii8_general_ci\">\n      <Charset>armscii8</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"4\" parent=\"1\" name=\"armscii8_general_nopad_ci\">\n      <Charset>armscii8</Charset>\n    </collation>\n    <collation id=\"5\" parent=\"1\" name=\"armscii8_nopad_bin\">\n      <Charset>armscii8</Charset>\n    </collation>\n    <collation id=\"6\" parent=\"1\" name=\"ascii_bin\">\n      <Charset>ascii</Charset>\n    </collation>\n    <collation id=\"7\" parent=\"1\" name=\"ascii_general_ci\">\n      <Charset>ascii</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"8\" parent=\"1\" name=\"ascii_general_nopad_ci\">\n      <Charset>ascii</Charset>\n    </collation>\n    <collation id=\"9\" parent=\"1\" name=\"ascii_nopad_bin\">\n      <Charset>ascii</Charset>\n    </collation>\n    <collation id=\"10\" parent=\"1\" name=\"big5_bin\">\n      <Charset>big5</Charset>\n    </collation>\n    <collation id=\"11\" parent=\"1\" name=\"big5_chinese_ci\">\n      <Charset>big5</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"12\" parent=\"1\" name=\"big5_chinese_nopad_ci\">\n      <Charset>big5</Charset>\n    </collation>\n    <collation id=\"13\" parent=\"1\" name=\"big5_nopad_bin\">\n      <Charset>big5</Charset>\n    </collation>\n    <collation id=\"14\" parent=\"1\" name=\"binary\">\n      <Charset>binary</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"15\" parent=\"1\" name=\"cp1250_bin\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"16\" parent=\"1\" name=\"cp1250_croatian_ci\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"17\" parent=\"1\" name=\"cp1250_czech_cs\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"18\" parent=\"1\" name=\"cp1250_general_ci\">\n      <Charset>cp1250</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"19\" parent=\"1\" name=\"cp1250_general_nopad_ci\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"20\" parent=\"1\" name=\"cp1250_nopad_bin\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"21\" parent=\"1\" name=\"cp1250_polish_ci\">\n      <Charset>cp1250</Charset>\n    </collation>\n    <collation id=\"22\" parent=\"1\" name=\"cp1251_bin\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"23\" parent=\"1\" name=\"cp1251_bulgarian_ci\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"24\" parent=\"1\" name=\"cp1251_general_ci\">\n      <Charset>cp1251</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"25\" parent=\"1\" name=\"cp1251_general_cs\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"26\" parent=\"1\" name=\"cp1251_general_nopad_ci\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"27\" parent=\"1\" name=\"cp1251_nopad_bin\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"28\" parent=\"1\" name=\"cp1251_ukrainian_ci\">\n      <Charset>cp1251</Charset>\n    </collation>\n    <collation id=\"29\" parent=\"1\" name=\"cp1256_bin\">\n      <Charset>cp1256</Charset>\n    </collation>\n    <collation id=\"30\" parent=\"1\" name=\"cp1256_general_ci\">\n      <Charset>cp1256</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"31\" parent=\"1\" name=\"cp1256_general_nopad_ci\">\n      <Charset>cp1256</Charset>\n    </collation>\n    <collation id=\"32\" parent=\"1\" name=\"cp1256_nopad_bin\">\n      <Charset>cp1256</Charset>\n    </collation>\n    <collation id=\"33\" parent=\"1\" name=\"cp1257_bin\">\n      <Charset>cp1257</Charset>\n    </collation>\n    <collation id=\"34\" parent=\"1\" name=\"cp1257_general_ci\">\n      <Charset>cp1257</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"35\" parent=\"1\" name=\"cp1257_general_nopad_ci\">\n      <Charset>cp1257</Charset>\n    </collation>\n    <collation id=\"36\" parent=\"1\" name=\"cp1257_lithuanian_ci\">\n      <Charset>cp1257</Charset>\n    </collation>\n    <collation id=\"37\" parent=\"1\" name=\"cp1257_nopad_bin\">\n      <Charset>cp1257</Charset>\n    </collation>\n    <collation id=\"38\" parent=\"1\" name=\"cp850_bin\">\n      <Charset>cp850</Charset>\n    </collation>\n    <collation id=\"39\" parent=\"1\" name=\"cp850_general_ci\">\n      <Charset>cp850</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"40\" parent=\"1\" name=\"cp850_general_nopad_ci\">\n      <Charset>cp850</Charset>\n    </collation>\n    <collation id=\"41\" parent=\"1\" name=\"cp850_nopad_bin\">\n      <Charset>cp850</Charset>\n    </collation>\n    <collation id=\"42\" parent=\"1\" name=\"cp852_bin\">\n      <Charset>cp852</Charset>\n    </collation>\n    <collation id=\"43\" parent=\"1\" name=\"cp852_general_ci\">\n      <Charset>cp852</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"44\" parent=\"1\" name=\"cp852_general_nopad_ci\">\n      <Charset>cp852</Charset>\n    </collation>\n    <collation id=\"45\" parent=\"1\" name=\"cp852_nopad_bin\">\n      <Charset>cp852</Charset>\n    </collation>\n    <collation id=\"46\" parent=\"1\" name=\"cp866_bin\">\n      <Charset>cp866</Charset>\n    </collation>\n    <collation id=\"47\" parent=\"1\" name=\"cp866_general_ci\">\n      <Charset>cp866</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"48\" parent=\"1\" name=\"cp866_general_nopad_ci\">\n      <Charset>cp866</Charset>\n    </collation>\n    <collation id=\"49\" parent=\"1\" name=\"cp866_nopad_bin\">\n      <Charset>cp866</Charset>\n    </collation>\n    <collation id=\"50\" parent=\"1\" name=\"cp932_bin\">\n      <Charset>cp932</Charset>\n    </collation>\n    <collation id=\"51\" parent=\"1\" name=\"cp932_japanese_ci\">\n      <Charset>cp932</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"52\" parent=\"1\" name=\"cp932_japanese_nopad_ci\">\n      <Charset>cp932</Charset>\n    </collation>\n    <collation id=\"53\" parent=\"1\" name=\"cp932_nopad_bin\">\n      <Charset>cp932</Charset>\n    </collation>\n    <collation id=\"54\" parent=\"1\" name=\"dec8_bin\">\n      <Charset>dec8</Charset>\n    </collation>\n    <collation id=\"55\" parent=\"1\" name=\"dec8_nopad_bin\">\n      <Charset>dec8</Charset>\n    </collation>\n    <collation id=\"56\" parent=\"1\" name=\"dec8_swedish_ci\">\n      <Charset>dec8</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"57\" parent=\"1\" name=\"dec8_swedish_nopad_ci\">\n      <Charset>dec8</Charset>\n    </collation>\n    <collation id=\"58\" parent=\"1\" name=\"eucjpms_bin\">\n      <Charset>eucjpms</Charset>\n    </collation>\n    <collation id=\"59\" parent=\"1\" name=\"eucjpms_japanese_ci\">\n      <Charset>eucjpms</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"60\" parent=\"1\" name=\"eucjpms_japanese_nopad_ci\">\n      <Charset>eucjpms</Charset>\n    </collation>\n    <collation id=\"61\" parent=\"1\" name=\"eucjpms_nopad_bin\">\n      <Charset>eucjpms</Charset>\n    </collation>\n    <collation id=\"62\" parent=\"1\" name=\"euckr_bin\">\n      <Charset>euckr</Charset>\n    </collation>\n    <collation id=\"63\" parent=\"1\" name=\"euckr_korean_ci\">\n      <Charset>euckr</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"64\" parent=\"1\" name=\"euckr_korean_nopad_ci\">\n      <Charset>euckr</Charset>\n    </collation>\n    <collation id=\"65\" parent=\"1\" name=\"euckr_nopad_bin\">\n      <Charset>euckr</Charset>\n    </collation>\n    <collation id=\"66\" parent=\"1\" name=\"gb2312_bin\">\n      <Charset>gb2312</Charset>\n    </collation>\n    <collation id=\"67\" parent=\"1\" name=\"gb2312_chinese_ci\">\n      <Charset>gb2312</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"68\" parent=\"1\" name=\"gb2312_chinese_nopad_ci\">\n      <Charset>gb2312</Charset>\n    </collation>\n    <collation id=\"69\" parent=\"1\" name=\"gb2312_nopad_bin\">\n      <Charset>gb2312</Charset>\n    </collation>\n    <collation id=\"70\" parent=\"1\" name=\"gbk_bin\">\n      <Charset>gbk</Charset>\n    </collation>\n    <collation id=\"71\" parent=\"1\" name=\"gbk_chinese_ci\">\n      <Charset>gbk</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"72\" parent=\"1\" name=\"gbk_chinese_nopad_ci\">\n      <Charset>gbk</Charset>\n    </collation>\n    <collation id=\"73\" parent=\"1\" name=\"gbk_nopad_bin\">\n      <Charset>gbk</Charset>\n    </collation>\n    <collation id=\"74\" parent=\"1\" name=\"geostd8_bin\">\n      <Charset>geostd8</Charset>\n    </collation>\n    <collation id=\"75\" parent=\"1\" name=\"geostd8_general_ci\">\n      <Charset>geostd8</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"76\" parent=\"1\" name=\"geostd8_general_nopad_ci\">\n      <Charset>geostd8</Charset>\n    </collation>\n    <collation id=\"77\" parent=\"1\" name=\"geostd8_nopad_bin\">\n      <Charset>geostd8</Charset>\n    </collation>\n    <collation id=\"78\" parent=\"1\" name=\"greek_bin\">\n      <Charset>greek</Charset>\n    </collation>\n    <collation id=\"79\" parent=\"1\" name=\"greek_general_ci\">\n      <Charset>greek</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"80\" parent=\"1\" name=\"greek_general_nopad_ci\">\n      <Charset>greek</Charset>\n    </collation>\n    <collation id=\"81\" parent=\"1\" name=\"greek_nopad_bin\">\n      <Charset>greek</Charset>\n    </collation>\n    <collation id=\"82\" parent=\"1\" name=\"hebrew_bin\">\n      <Charset>hebrew</Charset>\n    </collation>\n    <collation id=\"83\" parent=\"1\" name=\"hebrew_general_ci\">\n      <Charset>hebrew</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"84\" parent=\"1\" name=\"hebrew_general_nopad_ci\">\n      <Charset>hebrew</Charset>\n    </collation>\n    <collation id=\"85\" parent=\"1\" name=\"hebrew_nopad_bin\">\n      <Charset>hebrew</Charset>\n    </collation>\n    <collation id=\"86\" parent=\"1\" name=\"hp8_bin\">\n      <Charset>hp8</Charset>\n    </collation>\n    <collation id=\"87\" parent=\"1\" name=\"hp8_english_ci\">\n      <Charset>hp8</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"88\" parent=\"1\" name=\"hp8_english_nopad_ci\">\n      <Charset>hp8</Charset>\n    </collation>\n    <collation id=\"89\" parent=\"1\" name=\"hp8_nopad_bin\">\n      <Charset>hp8</Charset>\n    </collation>\n    <collation id=\"90\" parent=\"1\" name=\"keybcs2_bin\">\n      <Charset>keybcs2</Charset>\n    </collation>\n    <collation id=\"91\" parent=\"1\" name=\"keybcs2_general_ci\">\n      <Charset>keybcs2</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"92\" parent=\"1\" name=\"keybcs2_general_nopad_ci\">\n      <Charset>keybcs2</Charset>\n    </collation>\n    <collation id=\"93\" parent=\"1\" name=\"keybcs2_nopad_bin\">\n      <Charset>keybcs2</Charset>\n    </collation>\n    <collation id=\"94\" parent=\"1\" name=\"koi8r_bin\">\n      <Charset>koi8r</Charset>\n    </collation>\n    <collation id=\"95\" parent=\"1\" name=\"koi8r_general_ci\">\n      <Charset>koi8r</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"96\" parent=\"1\" name=\"koi8r_general_nopad_ci\">\n      <Charset>koi8r</Charset>\n    </collation>\n    <collation id=\"97\" parent=\"1\" name=\"koi8r_nopad_bin\">\n      <Charset>koi8r</Charset>\n    </collation>\n    <collation id=\"98\" parent=\"1\" name=\"koi8u_bin\">\n      <Charset>koi8u</Charset>\n    </collation>\n    <collation id=\"99\" parent=\"1\" name=\"koi8u_general_ci\">\n      <Charset>koi8u</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"100\" parent=\"1\" name=\"koi8u_general_nopad_ci\">\n      <Charset>koi8u</Charset>\n    </collation>\n    <collation id=\"101\" parent=\"1\" name=\"koi8u_nopad_bin\">\n      <Charset>koi8u</Charset>\n    </collation>\n    <collation id=\"102\" parent=\"1\" name=\"latin1_bin\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"103\" parent=\"1\" name=\"latin1_danish_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"104\" parent=\"1\" name=\"latin1_general_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"105\" parent=\"1\" name=\"latin1_general_cs\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"106\" parent=\"1\" name=\"latin1_german1_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"107\" parent=\"1\" name=\"latin1_german2_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"108\" parent=\"1\" name=\"latin1_nopad_bin\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"109\" parent=\"1\" name=\"latin1_spanish_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"110\" parent=\"1\" name=\"latin1_swedish_ci\">\n      <Charset>latin1</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"111\" parent=\"1\" name=\"latin1_swedish_nopad_ci\">\n      <Charset>latin1</Charset>\n    </collation>\n    <collation id=\"112\" parent=\"1\" name=\"latin2_bin\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"113\" parent=\"1\" name=\"latin2_croatian_ci\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"114\" parent=\"1\" name=\"latin2_czech_cs\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"115\" parent=\"1\" name=\"latin2_general_ci\">\n      <Charset>latin2</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"116\" parent=\"1\" name=\"latin2_general_nopad_ci\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"117\" parent=\"1\" name=\"latin2_hungarian_ci\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"118\" parent=\"1\" name=\"latin2_nopad_bin\">\n      <Charset>latin2</Charset>\n    </collation>\n    <collation id=\"119\" parent=\"1\" name=\"latin5_bin\">\n      <Charset>latin5</Charset>\n    </collation>\n    <collation id=\"120\" parent=\"1\" name=\"latin5_nopad_bin\">\n      <Charset>latin5</Charset>\n    </collation>\n    <collation id=\"121\" parent=\"1\" name=\"latin5_turkish_ci\">\n      <Charset>latin5</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"122\" parent=\"1\" name=\"latin5_turkish_nopad_ci\">\n      <Charset>latin5</Charset>\n    </collation>\n    <collation id=\"123\" parent=\"1\" name=\"latin7_bin\">\n      <Charset>latin7</Charset>\n    </collation>\n    <collation id=\"124\" parent=\"1\" name=\"latin7_estonian_cs\">\n      <Charset>latin7</Charset>\n    </collation>\n    <collation id=\"125\" parent=\"1\" name=\"latin7_general_ci\">\n      <Charset>latin7</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"126\" parent=\"1\" name=\"latin7_general_cs\">\n      <Charset>latin7</Charset>\n    </collation>\n    <collation id=\"127\" parent=\"1\" name=\"latin7_general_nopad_ci\">\n      <Charset>latin7</Charset>\n    </collation>\n    <collation id=\"128\" parent=\"1\" name=\"latin7_nopad_bin\">\n      <Charset>latin7</Charset>\n    </collation>\n    <collation id=\"129\" parent=\"1\" name=\"macce_bin\">\n      <Charset>macce</Charset>\n    </collation>\n    <collation id=\"130\" parent=\"1\" name=\"macce_general_ci\">\n      <Charset>macce</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"131\" parent=\"1\" name=\"macce_general_nopad_ci\">\n      <Charset>macce</Charset>\n    </collation>\n    <collation id=\"132\" parent=\"1\" name=\"macce_nopad_bin\">\n      <Charset>macce</Charset>\n    </collation>\n    <collation id=\"133\" parent=\"1\" name=\"macroman_bin\">\n      <Charset>macroman</Charset>\n    </collation>\n    <collation id=\"134\" parent=\"1\" name=\"macroman_general_ci\">\n      <Charset>macroman</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"135\" parent=\"1\" name=\"macroman_general_nopad_ci\">\n      <Charset>macroman</Charset>\n    </collation>\n    <collation id=\"136\" parent=\"1\" name=\"macroman_nopad_bin\">\n      <Charset>macroman</Charset>\n    </collation>\n    <collation id=\"137\" parent=\"1\" name=\"sjis_bin\">\n      <Charset>sjis</Charset>\n    </collation>\n    <collation id=\"138\" parent=\"1\" name=\"sjis_japanese_ci\">\n      <Charset>sjis</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"139\" parent=\"1\" name=\"sjis_japanese_nopad_ci\">\n      <Charset>sjis</Charset>\n    </collation>\n    <collation id=\"140\" parent=\"1\" name=\"sjis_nopad_bin\">\n      <Charset>sjis</Charset>\n    </collation>\n    <collation id=\"141\" parent=\"1\" name=\"swe7_bin\">\n      <Charset>swe7</Charset>\n    </collation>\n    <collation id=\"142\" parent=\"1\" name=\"swe7_nopad_bin\">\n      <Charset>swe7</Charset>\n    </collation>\n    <collation id=\"143\" parent=\"1\" name=\"swe7_swedish_ci\">\n      <Charset>swe7</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"144\" parent=\"1\" name=\"swe7_swedish_nopad_ci\">\n      <Charset>swe7</Charset>\n    </collation>\n    <collation id=\"145\" parent=\"1\" name=\"tis620_bin\">\n      <Charset>tis620</Charset>\n    </collation>\n    <collation id=\"146\" parent=\"1\" name=\"tis620_nopad_bin\">\n      <Charset>tis620</Charset>\n    </collation>\n    <collation id=\"147\" parent=\"1\" name=\"tis620_thai_ci\">\n      <Charset>tis620</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"148\" parent=\"1\" name=\"tis620_thai_nopad_ci\">\n      <Charset>tis620</Charset>\n    </collation>\n    <collation id=\"149\" parent=\"1\" name=\"uca1400_ai_ci\"/>\n    <collation id=\"150\" parent=\"1\" name=\"uca1400_ai_cs\"/>\n    <collation id=\"151\" parent=\"1\" name=\"uca1400_as_ci\"/>\n    <collation id=\"152\" parent=\"1\" name=\"uca1400_as_cs\"/>\n    <collation id=\"153\" parent=\"1\" name=\"uca1400_croatian_ai_ci\"/>\n    <collation id=\"154\" parent=\"1\" name=\"uca1400_croatian_ai_cs\"/>\n    <collation id=\"155\" parent=\"1\" name=\"uca1400_croatian_as_ci\"/>\n    <collation id=\"156\" parent=\"1\" name=\"uca1400_croatian_as_cs\"/>\n    <collation id=\"157\" parent=\"1\" name=\"uca1400_croatian_nopad_ai_ci\"/>\n    <collation id=\"158\" parent=\"1\" name=\"uca1400_croatian_nopad_ai_cs\"/>\n    <collation id=\"159\" parent=\"1\" name=\"uca1400_croatian_nopad_as_ci\"/>\n    <collation id=\"160\" parent=\"1\" name=\"uca1400_croatian_nopad_as_cs\"/>\n    <collation id=\"161\" parent=\"1\" name=\"uca1400_czech_ai_ci\"/>\n    <collation id=\"162\" parent=\"1\" name=\"uca1400_czech_ai_cs\"/>\n    <collation id=\"163\" parent=\"1\" name=\"uca1400_czech_as_ci\"/>\n    <collation id=\"164\" parent=\"1\" name=\"uca1400_czech_as_cs\"/>\n    <collation id=\"165\" parent=\"1\" name=\"uca1400_czech_nopad_ai_ci\"/>\n    <collation id=\"166\" parent=\"1\" name=\"uca1400_czech_nopad_ai_cs\"/>\n    <collation id=\"167\" parent=\"1\" name=\"uca1400_czech_nopad_as_ci\"/>\n    <collation id=\"168\" parent=\"1\" name=\"uca1400_czech_nopad_as_cs\"/>\n    <collation id=\"169\" parent=\"1\" name=\"uca1400_danish_ai_ci\"/>\n    <collation id=\"170\" parent=\"1\" name=\"uca1400_danish_ai_cs\"/>\n    <collation id=\"171\" parent=\"1\" name=\"uca1400_danish_as_ci\"/>\n    <collation id=\"172\" parent=\"1\" name=\"uca1400_danish_as_cs\"/>\n    <collation id=\"173\" parent=\"1\" name=\"uca1400_danish_nopad_ai_ci\"/>\n    <collation id=\"174\" parent=\"1\" name=\"uca1400_danish_nopad_ai_cs\"/>\n    <collation id=\"175\" parent=\"1\" name=\"uca1400_danish_nopad_as_ci\"/>\n    <collation id=\"176\" parent=\"1\" name=\"uca1400_danish_nopad_as_cs\"/>\n    <collation id=\"177\" parent=\"1\" name=\"uca1400_esperanto_ai_ci\"/>\n    <collation id=\"178\" parent=\"1\" name=\"uca1400_esperanto_ai_cs\"/>\n    <collation id=\"179\" parent=\"1\" name=\"uca1400_esperanto_as_ci\"/>\n    <collation id=\"180\" parent=\"1\" name=\"uca1400_esperanto_as_cs\"/>\n    <collation id=\"181\" parent=\"1\" name=\"uca1400_esperanto_nopad_ai_ci\"/>\n    <collation id=\"182\" parent=\"1\" name=\"uca1400_esperanto_nopad_ai_cs\"/>\n    <collation id=\"183\" parent=\"1\" name=\"uca1400_esperanto_nopad_as_ci\"/>\n    <collation id=\"184\" parent=\"1\" name=\"uca1400_esperanto_nopad_as_cs\"/>\n    <collation id=\"185\" parent=\"1\" name=\"uca1400_estonian_ai_ci\"/>\n    <collation id=\"186\" parent=\"1\" name=\"uca1400_estonian_ai_cs\"/>\n    <collation id=\"187\" parent=\"1\" name=\"uca1400_estonian_as_ci\"/>\n    <collation id=\"188\" parent=\"1\" name=\"uca1400_estonian_as_cs\"/>\n    <collation id=\"189\" parent=\"1\" name=\"uca1400_estonian_nopad_ai_ci\"/>\n    <collation id=\"190\" parent=\"1\" name=\"uca1400_estonian_nopad_ai_cs\"/>\n    <collation id=\"191\" parent=\"1\" name=\"uca1400_estonian_nopad_as_ci\"/>\n    <collation id=\"192\" parent=\"1\" name=\"uca1400_estonian_nopad_as_cs\"/>\n    <collation id=\"193\" parent=\"1\" name=\"uca1400_german2_ai_ci\"/>\n    <collation id=\"194\" parent=\"1\" name=\"uca1400_german2_ai_cs\"/>\n    <collation id=\"195\" parent=\"1\" name=\"uca1400_german2_as_ci\"/>\n    <collation id=\"196\" parent=\"1\" name=\"uca1400_german2_as_cs\"/>\n    <collation id=\"197\" parent=\"1\" name=\"uca1400_german2_nopad_ai_ci\"/>\n    <collation id=\"198\" parent=\"1\" name=\"uca1400_german2_nopad_ai_cs\"/>\n    <collation id=\"199\" parent=\"1\" name=\"uca1400_german2_nopad_as_ci\"/>\n    <collation id=\"200\" parent=\"1\" name=\"uca1400_german2_nopad_as_cs\"/>\n    <collation id=\"201\" parent=\"1\" name=\"uca1400_hungarian_ai_ci\"/>\n    <collation id=\"202\" parent=\"1\" name=\"uca1400_hungarian_ai_cs\"/>\n    <collation id=\"203\" parent=\"1\" name=\"uca1400_hungarian_as_ci\"/>\n    <collation id=\"204\" parent=\"1\" name=\"uca1400_hungarian_as_cs\"/>\n    <collation id=\"205\" parent=\"1\" name=\"uca1400_hungarian_nopad_ai_ci\"/>\n    <collation id=\"206\" parent=\"1\" name=\"uca1400_hungarian_nopad_ai_cs\"/>\n    <collation id=\"207\" parent=\"1\" name=\"uca1400_hungarian_nopad_as_ci\"/>\n    <collation id=\"208\" parent=\"1\" name=\"uca1400_hungarian_nopad_as_cs\"/>\n    <collation id=\"209\" parent=\"1\" name=\"uca1400_icelandic_ai_ci\"/>\n    <collation id=\"210\" parent=\"1\" name=\"uca1400_icelandic_ai_cs\"/>\n    <collation id=\"211\" parent=\"1\" name=\"uca1400_icelandic_as_ci\"/>\n    <collation id=\"212\" parent=\"1\" name=\"uca1400_icelandic_as_cs\"/>\n    <collation id=\"213\" parent=\"1\" name=\"uca1400_icelandic_nopad_ai_ci\"/>\n    <collation id=\"214\" parent=\"1\" name=\"uca1400_icelandic_nopad_ai_cs\"/>\n    <collation id=\"215\" parent=\"1\" name=\"uca1400_icelandic_nopad_as_ci\"/>\n    <collation id=\"216\" parent=\"1\" name=\"uca1400_icelandic_nopad_as_cs\"/>\n    <collation id=\"217\" parent=\"1\" name=\"uca1400_latvian_ai_ci\"/>\n    <collation id=\"218\" parent=\"1\" name=\"uca1400_latvian_ai_cs\"/>\n    <collation id=\"219\" parent=\"1\" name=\"uca1400_latvian_as_ci\"/>\n    <collation id=\"220\" parent=\"1\" name=\"uca1400_latvian_as_cs\"/>\n    <collation id=\"221\" parent=\"1\" name=\"uca1400_latvian_nopad_ai_ci\"/>\n    <collation id=\"222\" parent=\"1\" name=\"uca1400_latvian_nopad_ai_cs\"/>\n    <collation id=\"223\" parent=\"1\" name=\"uca1400_latvian_nopad_as_ci\"/>\n    <collation id=\"224\" parent=\"1\" name=\"uca1400_latvian_nopad_as_cs\"/>\n    <collation id=\"225\" parent=\"1\" name=\"uca1400_lithuanian_ai_ci\"/>\n    <collation id=\"226\" parent=\"1\" name=\"uca1400_lithuanian_ai_cs\"/>\n    <collation id=\"227\" parent=\"1\" name=\"uca1400_lithuanian_as_ci\"/>\n    <collation id=\"228\" parent=\"1\" name=\"uca1400_lithuanian_as_cs\"/>\n    <collation id=\"229\" parent=\"1\" name=\"uca1400_lithuanian_nopad_ai_ci\"/>\n    <collation id=\"230\" parent=\"1\" name=\"uca1400_lithuanian_nopad_ai_cs\"/>\n    <collation id=\"231\" parent=\"1\" name=\"uca1400_lithuanian_nopad_as_ci\"/>\n    <collation id=\"232\" parent=\"1\" name=\"uca1400_lithuanian_nopad_as_cs\"/>\n    <collation id=\"233\" parent=\"1\" name=\"uca1400_nopad_ai_ci\"/>\n    <collation id=\"234\" parent=\"1\" name=\"uca1400_nopad_ai_cs\"/>\n    <collation id=\"235\" parent=\"1\" name=\"uca1400_nopad_as_ci\"/>\n    <collation id=\"236\" parent=\"1\" name=\"uca1400_nopad_as_cs\"/>\n    <collation id=\"237\" parent=\"1\" name=\"uca1400_persian_ai_ci\"/>\n    <collation id=\"238\" parent=\"1\" name=\"uca1400_persian_ai_cs\"/>\n    <collation id=\"239\" parent=\"1\" name=\"uca1400_persian_as_ci\"/>\n    <collation id=\"240\" parent=\"1\" name=\"uca1400_persian_as_cs\"/>\n    <collation id=\"241\" parent=\"1\" name=\"uca1400_persian_nopad_ai_ci\"/>\n    <collation id=\"242\" parent=\"1\" name=\"uca1400_persian_nopad_ai_cs\"/>\n    <collation id=\"243\" parent=\"1\" name=\"uca1400_persian_nopad_as_ci\"/>\n    <collation id=\"244\" parent=\"1\" name=\"uca1400_persian_nopad_as_cs\"/>\n    <collation id=\"245\" parent=\"1\" name=\"uca1400_polish_ai_ci\"/>\n    <collation id=\"246\" parent=\"1\" name=\"uca1400_polish_ai_cs\"/>\n    <collation id=\"247\" parent=\"1\" name=\"uca1400_polish_as_ci\"/>\n    <collation id=\"248\" parent=\"1\" name=\"uca1400_polish_as_cs\"/>\n    <collation id=\"249\" parent=\"1\" name=\"uca1400_polish_nopad_ai_ci\"/>\n    <collation id=\"250\" parent=\"1\" name=\"uca1400_polish_nopad_ai_cs\"/>\n    <collation id=\"251\" parent=\"1\" name=\"uca1400_polish_nopad_as_ci\"/>\n    <collation id=\"252\" parent=\"1\" name=\"uca1400_polish_nopad_as_cs\"/>\n    <collation id=\"253\" parent=\"1\" name=\"uca1400_roman_ai_ci\"/>\n    <collation id=\"254\" parent=\"1\" name=\"uca1400_roman_ai_cs\"/>\n    <collation id=\"255\" parent=\"1\" name=\"uca1400_roman_as_ci\"/>\n    <collation id=\"256\" parent=\"1\" name=\"uca1400_roman_as_cs\"/>\n    <collation id=\"257\" parent=\"1\" name=\"uca1400_roman_nopad_ai_ci\"/>\n    <collation id=\"258\" parent=\"1\" name=\"uca1400_roman_nopad_ai_cs\"/>\n    <collation id=\"259\" parent=\"1\" name=\"uca1400_roman_nopad_as_ci\"/>\n    <collation id=\"260\" parent=\"1\" name=\"uca1400_roman_nopad_as_cs\"/>\n    <collation id=\"261\" parent=\"1\" name=\"uca1400_romanian_ai_ci\"/>\n    <collation id=\"262\" parent=\"1\" name=\"uca1400_romanian_ai_cs\"/>\n    <collation id=\"263\" parent=\"1\" name=\"uca1400_romanian_as_ci\"/>\n    <collation id=\"264\" parent=\"1\" name=\"uca1400_romanian_as_cs\"/>\n    <collation id=\"265\" parent=\"1\" name=\"uca1400_romanian_nopad_ai_ci\"/>\n    <collation id=\"266\" parent=\"1\" name=\"uca1400_romanian_nopad_ai_cs\"/>\n    <collation id=\"267\" parent=\"1\" name=\"uca1400_romanian_nopad_as_ci\"/>\n    <collation id=\"268\" parent=\"1\" name=\"uca1400_romanian_nopad_as_cs\"/>\n    <collation id=\"269\" parent=\"1\" name=\"uca1400_sinhala_ai_ci\"/>\n    <collation id=\"270\" parent=\"1\" name=\"uca1400_sinhala_ai_cs\"/>\n    <collation id=\"271\" parent=\"1\" name=\"uca1400_sinhala_as_ci\"/>\n    <collation id=\"272\" parent=\"1\" name=\"uca1400_sinhala_as_cs\"/>\n    <collation id=\"273\" parent=\"1\" name=\"uca1400_sinhala_nopad_ai_ci\"/>\n    <collation id=\"274\" parent=\"1\" name=\"uca1400_sinhala_nopad_ai_cs\"/>\n    <collation id=\"275\" parent=\"1\" name=\"uca1400_sinhala_nopad_as_ci\"/>\n    <collation id=\"276\" parent=\"1\" name=\"uca1400_sinhala_nopad_as_cs\"/>\n    <collation id=\"277\" parent=\"1\" name=\"uca1400_slovak_ai_ci\"/>\n    <collation id=\"278\" parent=\"1\" name=\"uca1400_slovak_ai_cs\"/>\n    <collation id=\"279\" parent=\"1\" name=\"uca1400_slovak_as_ci\"/>\n    <collation id=\"280\" parent=\"1\" name=\"uca1400_slovak_as_cs\"/>\n    <collation id=\"281\" parent=\"1\" name=\"uca1400_slovak_nopad_ai_ci\"/>\n    <collation id=\"282\" parent=\"1\" name=\"uca1400_slovak_nopad_ai_cs\"/>\n    <collation id=\"283\" parent=\"1\" name=\"uca1400_slovak_nopad_as_ci\"/>\n    <collation id=\"284\" parent=\"1\" name=\"uca1400_slovak_nopad_as_cs\"/>\n    <collation id=\"285\" parent=\"1\" name=\"uca1400_slovenian_ai_ci\"/>\n    <collation id=\"286\" parent=\"1\" name=\"uca1400_slovenian_ai_cs\"/>\n    <collation id=\"287\" parent=\"1\" name=\"uca1400_slovenian_as_ci\"/>\n    <collation id=\"288\" parent=\"1\" name=\"uca1400_slovenian_as_cs\"/>\n    <collation id=\"289\" parent=\"1\" name=\"uca1400_slovenian_nopad_ai_ci\"/>\n    <collation id=\"290\" parent=\"1\" name=\"uca1400_slovenian_nopad_ai_cs\"/>\n    <collation id=\"291\" parent=\"1\" name=\"uca1400_slovenian_nopad_as_ci\"/>\n    <collation id=\"292\" parent=\"1\" name=\"uca1400_slovenian_nopad_as_cs\"/>\n    <collation id=\"293\" parent=\"1\" name=\"uca1400_spanish2_ai_ci\"/>\n    <collation id=\"294\" parent=\"1\" name=\"uca1400_spanish2_ai_cs\"/>\n    <collation id=\"295\" parent=\"1\" name=\"uca1400_spanish2_as_ci\"/>\n    <collation id=\"296\" parent=\"1\" name=\"uca1400_spanish2_as_cs\"/>\n    <collation id=\"297\" parent=\"1\" name=\"uca1400_spanish2_nopad_ai_ci\"/>\n    <collation id=\"298\" parent=\"1\" name=\"uca1400_spanish2_nopad_ai_cs\"/>\n    <collation id=\"299\" parent=\"1\" name=\"uca1400_spanish2_nopad_as_ci\"/>\n    <collation id=\"300\" parent=\"1\" name=\"uca1400_spanish2_nopad_as_cs\"/>\n    <collation id=\"301\" parent=\"1\" name=\"uca1400_spanish_ai_ci\"/>\n    <collation id=\"302\" parent=\"1\" name=\"uca1400_spanish_ai_cs\"/>\n    <collation id=\"303\" parent=\"1\" name=\"uca1400_spanish_as_ci\"/>\n    <collation id=\"304\" parent=\"1\" name=\"uca1400_spanish_as_cs\"/>\n    <collation id=\"305\" parent=\"1\" name=\"uca1400_spanish_nopad_ai_ci\"/>\n    <collation id=\"306\" parent=\"1\" name=\"uca1400_spanish_nopad_ai_cs\"/>\n    <collation id=\"307\" parent=\"1\" name=\"uca1400_spanish_nopad_as_ci\"/>\n    <collation id=\"308\" parent=\"1\" name=\"uca1400_spanish_nopad_as_cs\"/>\n    <collation id=\"309\" parent=\"1\" name=\"uca1400_swedish_ai_ci\"/>\n    <collation id=\"310\" parent=\"1\" name=\"uca1400_swedish_ai_cs\"/>\n    <collation id=\"311\" parent=\"1\" name=\"uca1400_swedish_as_ci\"/>\n    <collation id=\"312\" parent=\"1\" name=\"uca1400_swedish_as_cs\"/>\n    <collation id=\"313\" parent=\"1\" name=\"uca1400_swedish_nopad_ai_ci\"/>\n    <collation id=\"314\" parent=\"1\" name=\"uca1400_swedish_nopad_ai_cs\"/>\n    <collation id=\"315\" parent=\"1\" name=\"uca1400_swedish_nopad_as_ci\"/>\n    <collation id=\"316\" parent=\"1\" name=\"uca1400_swedish_nopad_as_cs\"/>\n    <collation id=\"317\" parent=\"1\" name=\"uca1400_turkish_ai_ci\"/>\n    <collation id=\"318\" parent=\"1\" name=\"uca1400_turkish_ai_cs\"/>\n    <collation id=\"319\" parent=\"1\" name=\"uca1400_turkish_as_ci\"/>\n    <collation id=\"320\" parent=\"1\" name=\"uca1400_turkish_as_cs\"/>\n    <collation id=\"321\" parent=\"1\" name=\"uca1400_turkish_nopad_ai_ci\"/>\n    <collation id=\"322\" parent=\"1\" name=\"uca1400_turkish_nopad_ai_cs\"/>\n    <collation id=\"323\" parent=\"1\" name=\"uca1400_turkish_nopad_as_ci\"/>\n    <collation id=\"324\" parent=\"1\" name=\"uca1400_turkish_nopad_as_cs\"/>\n    <collation id=\"325\" parent=\"1\" name=\"uca1400_vietnamese_ai_ci\"/>\n    <collation id=\"326\" parent=\"1\" name=\"uca1400_vietnamese_ai_cs\"/>\n    <collation id=\"327\" parent=\"1\" name=\"uca1400_vietnamese_as_ci\"/>\n    <collation id=\"328\" parent=\"1\" name=\"uca1400_vietnamese_as_cs\"/>\n    <collation id=\"329\" parent=\"1\" name=\"uca1400_vietnamese_nopad_ai_ci\"/>\n    <collation id=\"330\" parent=\"1\" name=\"uca1400_vietnamese_nopad_ai_cs\"/>\n    <collation id=\"331\" parent=\"1\" name=\"uca1400_vietnamese_nopad_as_ci\"/>\n    <collation id=\"332\" parent=\"1\" name=\"uca1400_vietnamese_nopad_as_cs\"/>\n    <collation id=\"333\" parent=\"1\" name=\"ucs2_bin\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"334\" parent=\"1\" name=\"ucs2_croatian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"335\" parent=\"1\" name=\"ucs2_croatian_mysql561_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"336\" parent=\"1\" name=\"ucs2_czech_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"337\" parent=\"1\" name=\"ucs2_danish_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"338\" parent=\"1\" name=\"ucs2_esperanto_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"339\" parent=\"1\" name=\"ucs2_estonian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"340\" parent=\"1\" name=\"ucs2_general_ci\">\n      <Charset>ucs2</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"341\" parent=\"1\" name=\"ucs2_general_mysql500_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"342\" parent=\"1\" name=\"ucs2_general_nopad_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"343\" parent=\"1\" name=\"ucs2_german2_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"344\" parent=\"1\" name=\"ucs2_hungarian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"345\" parent=\"1\" name=\"ucs2_icelandic_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"346\" parent=\"1\" name=\"ucs2_latvian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"347\" parent=\"1\" name=\"ucs2_lithuanian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"348\" parent=\"1\" name=\"ucs2_myanmar_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"349\" parent=\"1\" name=\"ucs2_nopad_bin\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"350\" parent=\"1\" name=\"ucs2_persian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"351\" parent=\"1\" name=\"ucs2_polish_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"352\" parent=\"1\" name=\"ucs2_roman_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"353\" parent=\"1\" name=\"ucs2_romanian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"354\" parent=\"1\" name=\"ucs2_sinhala_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"355\" parent=\"1\" name=\"ucs2_slovak_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"356\" parent=\"1\" name=\"ucs2_slovenian_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"357\" parent=\"1\" name=\"ucs2_spanish2_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"358\" parent=\"1\" name=\"ucs2_spanish_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"359\" parent=\"1\" name=\"ucs2_swedish_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"360\" parent=\"1\" name=\"ucs2_thai_520_w2\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"361\" parent=\"1\" name=\"ucs2_turkish_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"362\" parent=\"1\" name=\"ucs2_unicode_520_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"363\" parent=\"1\" name=\"ucs2_unicode_520_nopad_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"364\" parent=\"1\" name=\"ucs2_unicode_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"365\" parent=\"1\" name=\"ucs2_unicode_nopad_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"366\" parent=\"1\" name=\"ucs2_vietnamese_ci\">\n      <Charset>ucs2</Charset>\n    </collation>\n    <collation id=\"367\" parent=\"1\" name=\"ujis_bin\">\n      <Charset>ujis</Charset>\n    </collation>\n    <collation id=\"368\" parent=\"1\" name=\"ujis_japanese_ci\">\n      <Charset>ujis</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"369\" parent=\"1\" name=\"ujis_japanese_nopad_ci\">\n      <Charset>ujis</Charset>\n    </collation>\n    <collation id=\"370\" parent=\"1\" name=\"ujis_nopad_bin\">\n      <Charset>ujis</Charset>\n    </collation>\n    <collation id=\"371\" parent=\"1\" name=\"utf16_bin\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"372\" parent=\"1\" name=\"utf16_croatian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"373\" parent=\"1\" name=\"utf16_croatian_mysql561_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"374\" parent=\"1\" name=\"utf16_czech_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"375\" parent=\"1\" name=\"utf16_danish_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"376\" parent=\"1\" name=\"utf16_esperanto_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"377\" parent=\"1\" name=\"utf16_estonian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"378\" parent=\"1\" name=\"utf16_general_ci\">\n      <Charset>utf16</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"379\" parent=\"1\" name=\"utf16_general_nopad_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"380\" parent=\"1\" name=\"utf16_german2_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"381\" parent=\"1\" name=\"utf16_hungarian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"382\" parent=\"1\" name=\"utf16_icelandic_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"383\" parent=\"1\" name=\"utf16_latvian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"384\" parent=\"1\" name=\"utf16_lithuanian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"385\" parent=\"1\" name=\"utf16_myanmar_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"386\" parent=\"1\" name=\"utf16_nopad_bin\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"387\" parent=\"1\" name=\"utf16_persian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"388\" parent=\"1\" name=\"utf16_polish_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"389\" parent=\"1\" name=\"utf16_roman_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"390\" parent=\"1\" name=\"utf16_romanian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"391\" parent=\"1\" name=\"utf16_sinhala_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"392\" parent=\"1\" name=\"utf16_slovak_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"393\" parent=\"1\" name=\"utf16_slovenian_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"394\" parent=\"1\" name=\"utf16_spanish2_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"395\" parent=\"1\" name=\"utf16_spanish_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"396\" parent=\"1\" name=\"utf16_swedish_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"397\" parent=\"1\" name=\"utf16_thai_520_w2\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"398\" parent=\"1\" name=\"utf16_turkish_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"399\" parent=\"1\" name=\"utf16_unicode_520_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"400\" parent=\"1\" name=\"utf16_unicode_520_nopad_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"401\" parent=\"1\" name=\"utf16_unicode_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"402\" parent=\"1\" name=\"utf16_unicode_nopad_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"403\" parent=\"1\" name=\"utf16_vietnamese_ci\">\n      <Charset>utf16</Charset>\n    </collation>\n    <collation id=\"404\" parent=\"1\" name=\"utf16le_bin\">\n      <Charset>utf16le</Charset>\n    </collation>\n    <collation id=\"405\" parent=\"1\" name=\"utf16le_general_ci\">\n      <Charset>utf16le</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"406\" parent=\"1\" name=\"utf16le_general_nopad_ci\">\n      <Charset>utf16le</Charset>\n    </collation>\n    <collation id=\"407\" parent=\"1\" name=\"utf16le_nopad_bin\">\n      <Charset>utf16le</Charset>\n    </collation>\n    <collation id=\"408\" parent=\"1\" name=\"utf32_bin\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"409\" parent=\"1\" name=\"utf32_croatian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"410\" parent=\"1\" name=\"utf32_croatian_mysql561_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"411\" parent=\"1\" name=\"utf32_czech_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"412\" parent=\"1\" name=\"utf32_danish_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"413\" parent=\"1\" name=\"utf32_esperanto_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"414\" parent=\"1\" name=\"utf32_estonian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"415\" parent=\"1\" name=\"utf32_general_ci\">\n      <Charset>utf32</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"416\" parent=\"1\" name=\"utf32_general_nopad_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"417\" parent=\"1\" name=\"utf32_german2_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"418\" parent=\"1\" name=\"utf32_hungarian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"419\" parent=\"1\" name=\"utf32_icelandic_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"420\" parent=\"1\" name=\"utf32_latvian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"421\" parent=\"1\" name=\"utf32_lithuanian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"422\" parent=\"1\" name=\"utf32_myanmar_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"423\" parent=\"1\" name=\"utf32_nopad_bin\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"424\" parent=\"1\" name=\"utf32_persian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"425\" parent=\"1\" name=\"utf32_polish_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"426\" parent=\"1\" name=\"utf32_roman_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"427\" parent=\"1\" name=\"utf32_romanian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"428\" parent=\"1\" name=\"utf32_sinhala_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"429\" parent=\"1\" name=\"utf32_slovak_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"430\" parent=\"1\" name=\"utf32_slovenian_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"431\" parent=\"1\" name=\"utf32_spanish2_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"432\" parent=\"1\" name=\"utf32_spanish_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"433\" parent=\"1\" name=\"utf32_swedish_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"434\" parent=\"1\" name=\"utf32_thai_520_w2\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"435\" parent=\"1\" name=\"utf32_turkish_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"436\" parent=\"1\" name=\"utf32_unicode_520_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"437\" parent=\"1\" name=\"utf32_unicode_520_nopad_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"438\" parent=\"1\" name=\"utf32_unicode_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"439\" parent=\"1\" name=\"utf32_unicode_nopad_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"440\" parent=\"1\" name=\"utf32_vietnamese_ci\">\n      <Charset>utf32</Charset>\n    </collation>\n    <collation id=\"441\" parent=\"1\" name=\"utf8mb3_bin\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"442\" parent=\"1\" name=\"utf8mb3_croatian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"443\" parent=\"1\" name=\"utf8mb3_croatian_mysql561_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"444\" parent=\"1\" name=\"utf8mb3_czech_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"445\" parent=\"1\" name=\"utf8mb3_danish_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"446\" parent=\"1\" name=\"utf8mb3_esperanto_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"447\" parent=\"1\" name=\"utf8mb3_estonian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"448\" parent=\"1\" name=\"utf8mb3_general_ci\">\n      <Charset>utf8mb3</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"449\" parent=\"1\" name=\"utf8mb3_general_mysql500_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"450\" parent=\"1\" name=\"utf8mb3_general_nopad_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"451\" parent=\"1\" name=\"utf8mb3_german2_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"452\" parent=\"1\" name=\"utf8mb3_hungarian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"453\" parent=\"1\" name=\"utf8mb3_icelandic_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"454\" parent=\"1\" name=\"utf8mb3_latvian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"455\" parent=\"1\" name=\"utf8mb3_lithuanian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"456\" parent=\"1\" name=\"utf8mb3_myanmar_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"457\" parent=\"1\" name=\"utf8mb3_nopad_bin\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"458\" parent=\"1\" name=\"utf8mb3_persian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"459\" parent=\"1\" name=\"utf8mb3_polish_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"460\" parent=\"1\" name=\"utf8mb3_roman_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"461\" parent=\"1\" name=\"utf8mb3_romanian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"462\" parent=\"1\" name=\"utf8mb3_sinhala_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"463\" parent=\"1\" name=\"utf8mb3_slovak_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"464\" parent=\"1\" name=\"utf8mb3_slovenian_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"465\" parent=\"1\" name=\"utf8mb3_spanish2_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"466\" parent=\"1\" name=\"utf8mb3_spanish_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"467\" parent=\"1\" name=\"utf8mb3_swedish_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"468\" parent=\"1\" name=\"utf8mb3_thai_520_w2\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"469\" parent=\"1\" name=\"utf8mb3_turkish_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"470\" parent=\"1\" name=\"utf8mb3_unicode_520_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"471\" parent=\"1\" name=\"utf8mb3_unicode_520_nopad_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"472\" parent=\"1\" name=\"utf8mb3_unicode_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"473\" parent=\"1\" name=\"utf8mb3_unicode_nopad_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"474\" parent=\"1\" name=\"utf8mb3_vietnamese_ci\">\n      <Charset>utf8mb3</Charset>\n    </collation>\n    <collation id=\"475\" parent=\"1\" name=\"utf8mb4_bin\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"476\" parent=\"1\" name=\"utf8mb4_croatian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"477\" parent=\"1\" name=\"utf8mb4_croatian_mysql561_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"478\" parent=\"1\" name=\"utf8mb4_czech_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"479\" parent=\"1\" name=\"utf8mb4_danish_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"480\" parent=\"1\" name=\"utf8mb4_esperanto_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"481\" parent=\"1\" name=\"utf8mb4_estonian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"482\" parent=\"1\" name=\"utf8mb4_general_ci\">\n      <Charset>utf8mb4</Charset>\n      <DefaultForCharset>1</DefaultForCharset>\n    </collation>\n    <collation id=\"483\" parent=\"1\" name=\"utf8mb4_general_nopad_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"484\" parent=\"1\" name=\"utf8mb4_german2_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"485\" parent=\"1\" name=\"utf8mb4_hungarian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"486\" parent=\"1\" name=\"utf8mb4_icelandic_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"487\" parent=\"1\" name=\"utf8mb4_latvian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"488\" parent=\"1\" name=\"utf8mb4_lithuanian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"489\" parent=\"1\" name=\"utf8mb4_myanmar_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"490\" parent=\"1\" name=\"utf8mb4_nopad_bin\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"491\" parent=\"1\" name=\"utf8mb4_persian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"492\" parent=\"1\" name=\"utf8mb4_polish_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"493\" parent=\"1\" name=\"utf8mb4_roman_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"494\" parent=\"1\" name=\"utf8mb4_romanian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"495\" parent=\"1\" name=\"utf8mb4_sinhala_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"496\" parent=\"1\" name=\"utf8mb4_slovak_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"497\" parent=\"1\" name=\"utf8mb4_slovenian_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"498\" parent=\"1\" name=\"utf8mb4_spanish2_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"499\" parent=\"1\" name=\"utf8mb4_spanish_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"500\" parent=\"1\" name=\"utf8mb4_swedish_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"501\" parent=\"1\" name=\"utf8mb4_thai_520_w2\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"502\" parent=\"1\" name=\"utf8mb4_turkish_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"503\" parent=\"1\" name=\"utf8mb4_unicode_520_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"504\" parent=\"1\" name=\"utf8mb4_unicode_520_nopad_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"505\" parent=\"1\" name=\"utf8mb4_unicode_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"506\" parent=\"1\" name=\"utf8mb4_unicode_nopad_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <collation id=\"507\" parent=\"1\" name=\"utf8mb4_vietnamese_ci\">\n      <Charset>utf8mb4</Charset>\n    </collation>\n    <schema id=\"508\" parent=\"1\" name=\"information_schema\">\n      <CollationName>utf8mb3_general_ci</CollationName>\n    </schema>\n    <schema id=\"509\" parent=\"1\" name=\"mysql\">\n      <CollationName>utf8mb4_general_ci</CollationName>\n    </schema>\n    <schema id=\"510\" parent=\"1\" name=\"oneNation\">\n      <LastIntrospectionLocalTimestamp>2024-04-14.15:50:22</LastIntrospectionLocalTimestamp>\n      <CollationName>utf8mb4_general_ci</CollationName>\n    </schema>\n    <schema id=\"511\" parent=\"1\" name=\"performance_schema\">\n      <CollationName>utf8mb3_general_ci</CollationName>\n    </schema>\n    <schema id=\"512\" parent=\"1\" name=\"sys\">\n      <CollationName>utf8mb3_general_ci</CollationName>\n    </schema>\n    <user id=\"513\" parent=\"1\" name=\"healthcheck\">\n      <Host>127.0.0.1</Host>\n    </user>\n    <user id=\"514\" parent=\"1\" name=\"healthcheck\">\n      <Host>::1</Host>\n    </user>\n    <user id=\"515\" parent=\"1\" name=\"healthcheck\">\n      <Host>localhost</Host>\n    </user>\n    <user id=\"516\" parent=\"1\" name=\"mariadb.sys\">\n      <Host>localhost</Host>\n    </user>\n    <user id=\"517\" parent=\"1\" name=\"root\"/>\n    <user id=\"518\" parent=\"1\" name=\"root\">\n      <Host>localhost</Host>\n    </user>\n  </database-model>\n</dataSource>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml b/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml
+--- a/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml	(date 1713344669784)
+@@ -1282,15 +1282,15 @@
+     <schema id="509" parent="1" name="mysql">
+       <CollationName>utf8mb4_general_ci</CollationName>
+     </schema>
+-    <schema id="510" parent="1" name="oneNation">
+-      <LastIntrospectionLocalTimestamp>2024-04-14.15:50:22</LastIntrospectionLocalTimestamp>
+-      <CollationName>utf8mb4_general_ci</CollationName>
+-    </schema>
+-    <schema id="511" parent="1" name="performance_schema">
++    <schema id="510" parent="1" name="performance_schema">
+       <CollationName>utf8mb3_general_ci</CollationName>
+     </schema>
+-    <schema id="512" parent="1" name="sys">
++    <schema id="511" parent="1" name="sys">
+       <CollationName>utf8mb3_general_ci</CollationName>
++    </schema>
++    <schema id="512" parent="1" name="score-store">
++      <LastIntrospectionLocalTimestamp>2024-04-16.06:39:12</LastIntrospectionLocalTimestamp>
++      <CollationName>utf8mb4_general_ci</CollationName>
+     </schema>
+     <user id="513" parent="1" name="healthcheck">
+       <Host>127.0.0.1</Host>
+@@ -1308,5 +1308,97 @@
+     <user id="518" parent="1" name="root">
+       <Host>localhost</Host>
+     </user>
++    <table id="519" parent="512" name="player">
++      <Engine>InnoDB</Engine>
++      <CollationName>utf8mb4_general_ci</CollationName>
++    </table>
++    <table id="520" parent="512" name="score">
++      <Engine>InnoDB</Engine>
++      <CollationName>utf8mb4_general_ci</CollationName>
++    </table>
++    <table id="521" parent="512" name="status">
++      <Engine>InnoDB</Engine>
++      <CollationName>utf8mb4_general_ci</CollationName>
++    </table>
++    <column id="522" parent="519" name="id">
++      <AutoIncrement>1</AutoIncrement>
++      <DasType>int(11)|0s</DasType>
++      <NotNull>1</NotNull>
++      <Position>1</Position>
++    </column>
++    <column id="523" parent="519" name="uuid">
++      <DasType>varchar(40)|0s</DasType>
++      <Position>2</Position>
++    </column>
++    <index id="524" parent="519" name="PRIMARY">
++      <ColNames>id</ColNames>
++      <Type>btree</Type>
++      <Unique>1</Unique>
++    </index>
++    <key id="525" parent="519" name="PRIMARY">
++      <NameSurrogate>1</NameSurrogate>
++      <Primary>1</Primary>
++      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
++    </key>
++    <column id="526" parent="520" name="player_id">
++      <DasType>int(11)|0s</DasType>
++      <NotNull>1</NotNull>
++      <Position>1</Position>
++    </column>
++    <column id="527" parent="520" name="key">
++      <DasType>varchar(64)|0s</DasType>
++      <NotNull>1</NotNull>
++      <Position>2</Position>
++    </column>
++    <column id="528" parent="520" name="value">
++      <DasType>int(11)|0s</DasType>
++      <Position>3</Position>
++    </column>
++    <foreign-key id="529" parent="520" name="score">
++      <ColNames>player_id</ColNames>
++      <RefColNames>id</RefColNames>
++      <RefTableName>player</RefTableName>
++    </foreign-key>
++    <index id="530" parent="520" name="PRIMARY">
++      <ColNames>player_id
++key</ColNames>
++      <Type>btree</Type>
++      <Unique>1</Unique>
++    </index>
++    <key id="531" parent="520" name="PRIMARY">
++      <NameSurrogate>1</NameSurrogate>
++      <Primary>1</Primary>
++      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
++    </key>
++    <column id="532" parent="521" name="player_id">
++      <DasType>int(11)|0s</DasType>
++      <NotNull>1</NotNull>
++      <Position>1</Position>
++    </column>
++    <column id="533" parent="521" name="type">
++      <DasType>int(11)|0s</DasType>
++      <NotNull>1</NotNull>
++      <Position>2</Position>
++    </column>
++    <column id="534" parent="521" name="value">
++      <DasType>int(11)|0s</DasType>
++      <Position>3</Position>
++    </column>
++    <foreign-key id="535" parent="521" name="status">
++      <ColNames>player_id</ColNames>
++      <RefColNames>id</RefColNames>
++      <RefTableName>player</RefTableName>
++    </foreign-key>
++    <index id="536" parent="521" name="PRIMARY">
++      <ColNames>player_id
++type</ColNames>
++      <Type>btree</Type>
++      <Unique>1</Unique>
++    </index>
++    <key id="537" parent="521" name="PRIMARY">
++      <NameSurrogate>1</NameSurrogate>
++      <Primary>1</Primary>
++      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
++    </key>
+   </database-model>
+ </dataSource>
+\ No newline at end of file
+Index: core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package net.kigawa.oyu.scoreboardstore.pluginmessage\n\nimport kotlinx.coroutines.CoroutineStart\nimport kotlinx.coroutines.Deferred\nimport kotlinx.coroutines.channels.Channel\nimport net.kigawa.kutil.unitapi.annotation.Kunit\nimport net.kigawa.oyu.scoreboardstore.util.PluginBase\nimport net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines\nimport org.bukkit.Server\nimport org.bukkit.entity.Player\nimport org.bukkit.plugin.messaging.PluginMessageListener\nimport java.io.ByteArrayInputStream\nimport java.io.ByteArrayOutputStream\nimport java.io.DataInputStream\nimport java.io.DataOutputStream\n\n\n@Kunit\nclass PluginMessages(\n  private val server: Server,\n  private val plugin: PluginBase,\n  private val coroutines: Coroutines,\n) : PluginMessageListener, AutoCloseable {\n  private val receiveChannel = Channel<Int>(1)\n  private val taskChannel = Channel<suspend () -> Unit>()\n\n  init {\n    server.messenger.registerOutgoingPluginChannel(plugin, \"BungeeCord\");\n    server.messenger.registerIncomingPluginChannel(plugin, \"BungeeCord\", this);\n    coroutines.launchDefault {\n      for (task in taskChannel) {\n        try {\n          task.invoke()\n        } catch (e: Exception) {\n          e.printStackTrace()\n        }\n      }\n      receiveChannel.close()\n      server.messenger.unregisterOutgoingPluginChannel(plugin);\n      server.messenger.unregisterIncomingPluginChannel(plugin);\n    }\n  }\n\n\n  private suspend fun <T> runTask(\n    player: Player,\n    vararg send: String,\n    receive: suspend () -> T,\n  ): Deferred<T> {\n    val res = coroutines.async(start = CoroutineStart.LAZY) {\n      val byteOut = ByteArrayOutputStream()\n      val out = DataOutputStream(byteOut)\n      send.forEach {\n        out.writeUTF(it)\n      }\n      player.sendPluginMessage(plugin, \"BungeeCord\", byteOut.toByteArray())\n\n      receive.invoke()\n    }\n    taskChannel.send {\n      res.start()\n      res.await()\n    }\n    return res\n  }\n\n  override fun close() {\n    taskChannel.close()\n  }\n\n  override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {\n    coroutines.launchDefault {\n      var result = 0\n      try {\n        if (channel != \"BungeeCord\") {\n          result = -2\n          return@launchDefault\n        }\n        val byteIn = DataInputStream(ByteArrayInputStream(message))\n\n        when (val sub = byteIn.readUTF()) {\n          \"PlayerCount\" -> {\n            byteIn.readUTF()\n            result = byteIn.readInt()\n          }\n\n          else -> {\n            println(sub)\n            result = -3\n          }\n        }\n      } finally {\n        receiveChannel.send(result)\n      }\n    }\n  }\n\n\n  suspend fun getPlayerCount(player: Player, server: String) = runTask(player, \"PlayerCount\", server) {\n    return@runTask receiveChannel.receive()\n  }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt b/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt
+--- a/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt	(date 1713273581368)
+@@ -99,5 +99,8 @@
+   suspend fun getPlayerCount(player: Player, server: String) = runTask(player, "PlayerCount", server) {
+     return@runTask receiveChannel.receive()
+   }
++  suspend fun connectServer(player: Player, server: String) = runTask(player, "Connect", server) {
++    return@runTask receiveChannel.receive()
++  }
+ 
+ }
+\ No newline at end of file
+Index: .idea/dataSources.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"DataSourceManagerImpl\" format=\"xml\" multifile-model=\"true\">\n    <data-source source=\"LOCAL\" name=\"@localhost [2]\" uuid=\"0abd0854-79f4-4f61-9341-f36f64786bd4\">\n      <driver-ref>mariadb</driver-ref>\n      <synchronize>true</synchronize>\n      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>\n      <jdbc-url>jdbc:mariadb://localhost:3307</jdbc-url>\n      <working-dir>$ProjectFileDir$</working-dir>\n    </data-source>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources.xml b/.idea/dataSources.xml
+--- a/.idea/dataSources.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/dataSources.xml	(date 1713249260715)
+@@ -6,6 +6,11 @@
+       <synchronize>true</synchronize>
+       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+       <jdbc-url>jdbc:mariadb://localhost:3307</jdbc-url>
++      <jdbc-additional-properties>
++        <property name="com.intellij.clouds.kubernetes.db.host.port" />
++        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
++        <property name="com.intellij.clouds.kubernetes.db.container.port" />
++      </jdbc-additional-properties>
+       <working-dir>$ProjectFileDir$</working-dir>
+     </data-source>
+   </component>
+Index: .idea/dataSources.local.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"dataSourceStorageLocal\" created-in=\"IU-241.14494.240\">\n    <data-source name=\"@localhost [2]\" uuid=\"0abd0854-79f4-4f61-9341-f36f64786bd4\">\n      <database-info product=\"MariaDB\" version=\"11.3.2-MariaDB-1:11.3.2+maria~ubu2204\" jdbc-version=\"4.2\" driver-name=\"MariaDB Connector/J\" driver-version=\"3.0.7\" dbms=\"MARIADB\" exact-version=\"11.3.2\" exact-driver-version=\"3.0\">\n        <extra-name-characters>#@</extra-name-characters>\n        <identifier-quote-string>`</identifier-quote-string>\n      </database-info>\n      <case-sensitivity plain-identifiers=\"exact\" quoted-identifiers=\"exact\" />\n      <secret-storage>master_key</secret-storage>\n      <user-name>root</user-name>\n      <schema-mapping />\n    </data-source>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources.local.xml b/.idea/dataSources.local.xml
+--- a/.idea/dataSources.local.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/dataSources.local.xml	(date 1713251037932)
+@@ -9,7 +9,14 @@
+       <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+       <secret-storage>master_key</secret-storage>
+       <user-name>root</user-name>
+-      <schema-mapping />
++      <schema-mapping>
++        <introspection-scope>
++          <node kind="schema">
++            <name qname="@" />
++            <name qname="score-store" />
++          </node>
++        </introspection-scope>
++      </schema-mapping>
+     </data-source>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/artifacts/scoreboard_store_core_jar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ArtifactManager\">\n  <artifact type=\"jar\" name=\"scoreboard-store.core:jar\">\n    <output-path>$PROJECT_DIR$/data-mc/plugins</output-path>\n    <root id=\"archive\" name=\"scoreboard-store.core.jar\">\n      <element id=\"module-output\" name=\"scoreboard-store.core.main\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/errorprone/error_prone_annotations/2.7.1/error_prone_annotations-2.7.1.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/com/zaxxer/HikariCP/5.0.1/HikariCP-5.0.1.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$USER_HOME$/.gradle/caches/modules-2/files-2.1/dev.jorel/commandapi-bukkit-shade/9.3.0/145ee0e27a97733cc4cc40641910aabfb70d18c2/commandapi-bukkit-shade-9.3.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit-api/4.4.0/kutil-unit-api-4.4.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit-impl/4.4.0/kutil-unit-impl-4.4.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit/4.4.0/kutil-unit-4.4.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil/2.2.2/kutil-2.2.2.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/kigawa/kutil/log/2.0/log-2.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/net/md-5/bungeecord-chat/1.16-R0.4/bungeecord-chat-1.16-R0.4.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/checkerframework/checker-qual/3.12.0/checker-qual-3.12.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.9.22/761ab33cf85f03a3a24595e1b92639d82e7a9564/kotlin-reflect-1.9.22.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.8.20/kotlin-stdlib-common-1.8.20.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.20/kotlin-stdlib-jdk7-1.8.20.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.20/kotlin-stdlib-jdk8-1.8.20.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.7.3/2b09627576f0989a436a00a4a54b55fa5026fb86/kotlinx-coroutines-core-jvm-1.7.3.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/spigotmc/spigot-api/1.18.2-R0.1-SNAPSHOT/spigot-api-1.18.2-R0.1-SNAPSHOT.jar\" path-in-jar=\"/\" />\n      <element id=\"extracted-dir\" path=\"$MAVEN_REPOSITORY$/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar\" path-in-jar=\"/\" />\n      <element id=\"dir-copy\" path=\"$PROJECT_DIR$/core/src/main/resources\" />\n    </root>\n  </artifact>\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/artifacts/scoreboard_store_core_jar.xml b/.idea/artifacts/scoreboard_store_core_jar.xml
+--- a/.idea/artifacts/scoreboard_store_core_jar.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/artifacts/scoreboard_store_core_jar.xml	(date 1713249095059)
+@@ -3,34 +3,31 @@
+     <output-path>$PROJECT_DIR$/data-mc/plugins</output-path>
+     <root id="archive" name="scoreboard-store.core.jar">
+       <element id="module-output" name="scoreboard-store.core.main" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/errorprone/error_prone_annotations/2.7.1/error_prone_annotations-2.7.1.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/zaxxer/HikariCP/5.0.1/HikariCP-5.0.1.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" path-in-jar="/" />
++      <element id="dir-copy" path="$PROJECT_DIR$/core/src/main/resources" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.9/8a432c1d6825781e21a02db2e2c33c5fde2833b9/gson-2.8.9.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.7.1/458d9042f7aa6fa9a634df902b37f544e15aacac/error_prone_annotations-2.7.1.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/31.0.1-jre/119ea2b2bc205b138974d351777b20f02b92704b/guava-31.0.1-jre.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/b421526c5f297295adef1c886e5246c39d4ac629/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/1.3/ba035118bc8bac37d7eff77700720999acd9986d/j2objc-annotations-1.3.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.zaxxer/HikariCP/5.0.1/a74c7f0a37046846e88d54f7cb6ea6d565c65f9c/HikariCP-5.0.1.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar" path-in-jar="/" />
+       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/dev.jorel/commandapi-bukkit-shade/9.3.0/145ee0e27a97733cc4cc40641910aabfb70d18c2/commandapi-bukkit-shade-9.3.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit-api/4.4.0/kutil-unit-api-4.4.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit-impl/4.4.0/kutil-unit-impl-4.4.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil-unit/4.4.0/kutil-unit-4.4.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/kigawa/kutil/kutil/2.2.2/kutil-2.2.2.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/kigawa/kutil/log/2.0/log-2.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/md-5/bungeecord-chat/1.16-R0.4/bungeecord-chat-1.16-R0.4.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/checkerframework/checker-qual/3.12.0/checker-qual-3.12.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.9.22/761ab33cf85f03a3a24595e1b92639d82e7a9564/kotlin-reflect-1.9.22.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.8.20/kotlin-stdlib-common-1.8.20.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.8.20/kotlin-stdlib-jdk7-1.8.20.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.8.20/kotlin-stdlib-jdk8-1.8.20.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.kigawa.kutil/kutil-unit-api/4.4.0/480e1657c5f717511db1484eefd532fe7fad667e/kutil-unit-api-4.4.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.kigawa.kutil/kutil-unit-impl/4.4.0/93ec8a5f0c96e89bd1ad234d2c9be90f9d8bd2d4/kutil-unit-impl-4.4.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.kigawa.kutil/kutil-unit/4.4.0/fa7e8fb91264404a6e14a0734f595327c0e9a3c4/kutil-unit-4.4.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.kigawa.kutil/kutil/2.2.2/692c2658bca29c41be9036a7ed78ba9fbc27b511/kutil-2.2.2.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.kigawa.kutil/log/2.0/7d9b7cc88126e2a822b8609733fbee4e206357af/log-2.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.16-R0.4/e043e8eed8fdb5c157090a84ac8fd64a6a8d0d88/bungeecord-chat-1.16-R0.4.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.12.0/d5692f0526415fcc6de94bb5bfbd3afd9dd3b3e5/checker-qual-3.12.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.9.21/5570877dec93532519eda165abb3674ea1e07cbc/kotlin-reflect-1.9.21.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.8.20/3aa51faf20aae8b31e1a4bc54f8370673d7b7df4/kotlin-stdlib-jdk7-1.8.20.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.20/73576ddf378c5b4f1f6b449fe6b119b8183fc078/kotlin-stdlib-jdk8-1.8.20.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.9.21/17ee3e873d439566c7d8354403b5f3d9744c4c9c/kotlin-stdlib-1.9.21.jar" path-in-jar="/" />
+       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm/1.7.3/2b09627576f0989a436a00a4a54b55fa5026fb86/kotlinx-coroutines-core-jvm-1.7.3.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/spigotmc/spigot-api/1.18.2-R0.1-SNAPSHOT/spigot-api-1.18.2-R0.1-SNAPSHOT.jar" path-in-jar="/" />
+-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar" path-in-jar="/" />
+-      <element id="dir-copy" path="$PROJECT_DIR$/core/src/main/resources" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/23.0.0/8cc20c07506ec18e0834947b84a864bfc094484e/annotations-23.0.0.jar" path-in-jar="/" />
++      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.30/b5a4b6d16ab13e34a88fae84c35cd5d68cac922c/slf4j-api-1.7.30.jar" path-in-jar="/" />
+     </root>
+   </artifact>
+ </component>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\n  <component name=\"GradleSettings\">\n    <option name=\"linkedExternalProjectsSettings\">\n      <GradleProjectSettings>\n        <compositeConfiguration>\n          <compositeBuild compositeDefinitionSource=\"SCRIPT\">\n            <builds>\n              <build path=\"$PROJECT_DIR$/buildSrc\" name=\"buildSrc\">\n                <projects>\n                  <project path=\"$PROJECT_DIR$/buildSrc\" />\n                </projects>\n              </build>\n            </builds>\n          </compositeBuild>\n        </compositeConfiguration>\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"gradleJvm\" value=\"#JAVA_HOME\" />\n        <option name=\"modules\">\n          <set>\n            <option value=\"$PROJECT_DIR$\" />\n            <option value=\"$PROJECT_DIR$/buildSrc\" />\n            <option value=\"$PROJECT_DIR$/core\" />\n          </set>\n        </option>\n      </GradleProjectSettings>\n    </option>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/gradle.xml	(date 1713249313853)
+@@ -16,7 +16,6 @@
+           </compositeBuild>
+         </compositeConfiguration>
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+-        <option name="gradleJvm" value="#JAVA_HOME" />
+         <option name="modules">
+           <set>
+             <option value="$PROJECT_DIR$" />
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\n  <component name=\"FrameworkDetectionExcludesConfiguration\">\n    <file type=\"web\" url=\"file://$PROJECT_DIR$\" />\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_17\" project-jdk-name=\"17\" project-jdk-type=\"JavaSDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/misc.xml	(date 1713252928832)
+@@ -4,5 +4,5 @@
+   <component name="FrameworkDetectionExcludesConfiguration">
+     <file type="web" url="file://$PROJECT_DIR$" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="17" project-jdk-type="JavaSDK" />
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#n:oneNation\n!<md> [0, 0, null, null, -2147483648, -2147483648]\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta b/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta
+--- a/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta	(date 1713249503409)
+@@ -1,2 +1,2 @@
+ #n:oneNation
+-!<md> [0, 0, null, null, -2147483648, -2147483648]
++!<md> [null, 0, null, null, -2147483648, -2147483648]
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ArtifactsWorkspaceSettings\">\n    <artifacts-to-build>\n      <artifact name=\"scoreboard-store.core:jar\" />\n    </artifacts-to-build>\n  </component>\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"6455cac0-7e61-4cf0-a2f2-26e2974463bc\" name=\"変更\" comment=\"wip\">\n      <change afterPath=\"$PROJECT_DIR$/data-bungee/.gitignore\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/data-mc/.gitignore\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/data-mc/plugins.txt\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/docker-compose.yml\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"ExternalProjectsData\">\n    <projectState path=\"$PROJECT_DIR$\">\n      <ProjectState />\n    </projectState>\n  </component>\n  <component name=\"ExternalProjectsManager\">\n    <system id=\"GRADLE\">\n      <state>\n        <task path=\"$PROJECT_DIR$\">\n          <activation />\n        </task>\n        <projects_view>\n          <tree_state>\n            <expand>\n              <path>\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\n                <item name=\"scoreboard-store\" type=\"f1a62948:ProjectNode\" />\n              </path>\n              <path>\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\n                <item name=\"scoreboard-store\" type=\"f1a62948:ProjectNode\" />\n                <item name=\"Tasks\" type=\"e4a08cd1:TasksNode\" />\n              </path>\n              <path>\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\n                <item name=\"scoreboard-store\" type=\"f1a62948:ProjectNode\" />\n                <item name=\"Tasks\" type=\"e4a08cd1:TasksNode\" />\n                <item name=\"shadow\" type=\"c8890929:TasksNode$1\" />\n              </path>\n            </expand>\n            <select />\n          </tree_state>\n        </projects_view>\n      </state>\n    </system>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;kigawa01&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/oyucraft/scoreboard-store.git&quot;,\n    &quot;accountId&quot;: &quot;07145217-e102-4301-b153-67919400698a&quot;\n  }\n}</component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 7\n}</component>\n  <component name=\"ProjectId\" id=\"2f3ZtUv34Sqj9UDCqpDdavfYphA\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"Docker.docker-compose.yml: Compose デプロイ.executor\": \"Run\",\n    \"Gradle.scoreboard-store [shadowJar].executor\": \"Run\",\n    \"Gradle.ソースのダウンロード.executor\": \"Run\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"git-widget-placeholder\": \"master\",\n    \"ignore.virus.scanning.warn.message\": \"true\",\n    \"kotlin-language-version-configured\": \"true\",\n    \"last_opened_file_path\": \"D:/project/dev/oyu/scoreboard-store/core/src/main/resources\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.detected.package.tslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"project.structure.last.edited\": \"アーティファクト\",\n    \"project.structure.proportion\": \"0.15990058\",\n    \"project.structure.side.proportion\": \"0.3620489\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  },\n  \"keyToStringList\": {\n    \"DatabaseDriversLRU\": [\n      \"mariadb\"\n    ],\n    \"kotlin-gradle-user-dirs\": [\n      \"C:\\\\Users\\\\kigaw\\\\.gradle\"\n    ]\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"D:\\project\\dev\\oyu\\scoreboard-store\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Docker.docker-compose.yml: Compose デプロイ\">\n    <configuration name=\"scoreboard-store [shadowJar]\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\n      <ExternalSystemSettings>\n        <option name=\"executionName\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n        <option name=\"scriptParameters\" />\n        <option name=\"taskDescriptions\">\n          <list />\n        </option>\n        <option name=\"taskNames\">\n          <list>\n            <option value=\"shadowJar\" />\n          </list>\n        </option>\n        <option name=\"vmOptions\" />\n      </ExternalSystemSettings>\n      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n      <DebugAllEnabled>false</DebugAllEnabled>\n      <RunAsTest>false</RunAsTest>\n      <method v=\"2\" />\n    </configuration>\n    <configuration default=\"true\" type=\"JetRunConfigurationType\">\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration default=\"true\" type=\"KotlinStandaloneScriptRunConfigurationType\">\n      <option name=\"filePath\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration default=\"true\" type=\"docker-deploy\" factoryName=\"docker-compose.yml\" temporary=\"true\">\n      <deployment type=\"docker-compose.yml\" />\n      <method v=\"2\" />\n    </configuration>\n    <list>\n      <item itemvalue=\"Docker.docker-compose.yml: Compose デプロイ\" />\n      <item itemvalue=\"Gradle.scoreboard-store [shadowJar]\" />\n    </list>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Docker.docker-compose.yml: Compose デプロイ\" />\n        <item itemvalue=\"Gradle.scoreboard-store [shadowJar]\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240\" />\n        <option value=\"bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"アプリケーションレベル\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"デフォルトタスク\">\n      <changelist id=\"6455cac0-7e61-4cf0-a2f2-26e2974463bc\" name=\"変更\" comment=\"\" />\n      <created>1713031936827</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1713031936827</updated>\n      <workItem from=\"1713031938019\" duration=\"3104000\" />\n      <workItem from=\"1713106197680\" duration=\"3469000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"wip\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1713071180177</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1713071180177</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"2\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"wip\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"wip\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision e34aa57b84fc483aab6afe2c73cdb2276c56e89c)
++++ b/.idea/workspace.xml	(date 1713344669952)
+@@ -10,10 +10,17 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="wip">
+-      <change afterPath="$PROJECT_DIR$/data-bungee/.gitignore" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/data-mc/.gitignore" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/data-mc/plugins.txt" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/forwardedPorts.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0abd0854-79f4-4f61-9341-f36f64786bd4/storage_v2/_src_/schema/oneNation.TQXqVQ.meta" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -68,7 +75,7 @@
+   <component name="GithubPullRequestsUISettings">{
+   &quot;selectedUrlAndAccountId&quot;: {
+     &quot;url&quot;: &quot;https://github.com/oyucraft/scoreboard-store.git&quot;,
+-    &quot;accountId&quot;: &quot;07145217-e102-4301-b153-67919400698a&quot;
++    &quot;accountId&quot;: &quot;8a3557e8-ea02-4747-be1f-dab395c09d54&quot;
+   }
+ }</component>
+   <component name="ProjectColorInfo">{
+@@ -79,35 +86,70 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "Docker.docker-compose.yml: Compose デプロイ.executor": "Run",
+-    "Gradle.scoreboard-store [shadowJar].executor": "Run",
+-    "Gradle.ソースのダウンロード.executor": "Run",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "git-widget-placeholder": "master",
+-    "ignore.virus.scanning.warn.message": "true",
+-    "kotlin-language-version-configured": "true",
+-    "last_opened_file_path": "D:/project/dev/oyu/scoreboard-store/core/src/main/resources",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "project.structure.last.edited": "アーティファクト",
+-    "project.structure.proportion": "0.15990058",
+-    "project.structure.side.proportion": "0.3620489",
+-    "vue.rearranger.settings.migration": "true"
+-  },
+-  "keyToStringList": {
+-    "DatabaseDriversLRU": [
+-      "mariadb"
+-    ],
+-    "kotlin-gradle-user-dirs": [
+-      "C:\\Users\\kigaw\\.gradle"
+-    ]
+-  }
+-}]]></component>
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;Docker.docker-compose.yml: Compose デプロイ.executor&quot;: &quot;Run&quot;,
++    &quot;Gradle.scoreboard-store [shadowJar].executor&quot;: &quot;Run&quot;,
++    &quot;Gradle.ソースのダウンロード.executor&quot;: &quot;Run&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
++    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
++    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;D:/project/dev/oyu/scoreboard-store/core/src/main/resources&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
++    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;アーティファクト&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.15990058&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.3620489&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
++    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  },
++  &quot;keyToStringList&quot;: {
++    &quot;DatabaseDriversLRU&quot;: [
++      &quot;mariadb&quot;
++    ],
++    &quot;kotlin-gradle-user-dirs&quot;: [
++      &quot;/home/kigawa/.gradle&quot;
++    ]
++  }
++}</component>
++  <component name="RdControllerToolWindowsLayoutState" isNewUi="true">
++    <layout>
++      <window_info id="Bookmarks" show_stripe_button="false" side_tool="true" />
++      <window_info id="Merge Requests" show_stripe_button="false" />
++      <window_info id="Commit_Guest" show_stripe_button="false" />
++      <window_info id="Pull Requests" show_stripe_button="false" />
++      <window_info id="Learn" show_stripe_button="false" />
++      <window_info content_ui="combo" id="Project" order="0" weight="0.21098968" />
++      <window_info active="true" id="Commit" order="1" visible="true" weight="0.2498482" />
++      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
++      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
++      <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
++      <window_info anchor="bottom" id="Profiler" show_stripe_button="false" />
++      <window_info anchor="bottom" id="TODO" show_stripe_button="false" />
++      <window_info anchor="bottom" id="Find Mixins" />
++      <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
++      <window_info anchor="bottom" id="Run" />
++      <window_info active="true" anchor="bottom" id="Version Control" order="0" visible="true" weight="0.32968602" />
++      <window_info anchor="bottom" id="Problems" order="1" />
++      <window_info anchor="bottom" id="Problems View" order="2" />
++      <window_info anchor="bottom" id="Terminal" order="3" weight="0.32968602" />
++      <window_info anchor="bottom" id="Build" order="4" weight="0.32968602" />
++      <window_info anchor="bottom" id="Services" order="5" weight="0.29543293" />
++      <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
++      <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
++      <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
++      <window_info anchor="right" id="AIAssistant" order="1" weight="0.25" />
++      <window_info anchor="right" id="Database" order="2" weight="0.2498482" />
++      <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
++      <window_info anchor="right" id="Maven" order="4" weight="0.25" />
++      <window_info anchor="right" id="Translation.Wordbook" order="5" show_stripe_button="false" side_tool="true" />
++    </layout>
++  </component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="D:\project\dev\oyu\scoreboard-store" />
+@@ -148,7 +190,9 @@
+       </method>
+     </configuration>
+     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+-      <deployment type="docker-compose.yml" />
++      <deployment type="docker-compose.yml">
++        <settings />
++      </deployment>
+       <method v="2" />
+     </configuration>
+     <list>
+@@ -157,7 +201,6 @@
+     </list>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="Docker.docker-compose.yml: Compose デプロイ" />
+         <item itemvalue="Gradle.scoreboard-store [shadowJar]" />
+       </list>
+     </recent_temporary>
+@@ -180,6 +223,8 @@
+       <updated>1713031936827</updated>
+       <workItem from="1713031938019" duration="3104000" />
+       <workItem from="1713106197680" duration="3469000" />
++      <workItem from="1713239896264" duration="4407000" />
++      <workItem from="1713272161241" duration="3543000" />
+     </task>
+     <task id="LOCAL-00001" summary="wip">
+       <option name="closed" value="true" />
+@@ -210,4 +255,8 @@
+     <MESSAGE value="wip" />
+     <option name="LAST_COMMIT_MESSAGE" value="wip" />
+   </component>
++  <component name="XSLT-Support.FileAssociations.UIState">
++    <expand />
++    <select />
++  </component>
+ </project>
+\ No newline at end of file
+Index: .idea/forwardedPorts.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/forwardedPorts.xml b/.idea/forwardedPorts.xml
+new file mode 100644
+--- /dev/null	(date 1713249260735)
++++ b/.idea/forwardedPorts.xml	(date 1713249260735)
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="PortForwardingSettings">
++    <ports>
++      <entry key="3307">
++        <ForwardedPortInfo>
++          <option name="hostPort" value="3307" />
++          <option name="readOnly" value="false" />
++        </ForwardedPortInfo>
++      </entry>
++    </ports>
++  </component>
++</project>
+\ No newline at end of file

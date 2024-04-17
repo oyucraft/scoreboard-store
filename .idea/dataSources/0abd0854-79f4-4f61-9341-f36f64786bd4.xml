@@ -1282,15 +1282,15 @@
     <schema id="509" parent="1" name="mysql">
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
-    <schema id="510" parent="1" name="oneNation">
-      <LastIntrospectionLocalTimestamp>2024-04-14.15:50:22</LastIntrospectionLocalTimestamp>
+    <schema id="510" parent="1" name="performance_schema">
+      <CollationName>utf8mb3_general_ci</CollationName>
+    </schema>
+    <schema id="511" parent="1" name="sys">
+      <CollationName>utf8mb3_general_ci</CollationName>
+    </schema>
+    <schema id="512" parent="1" name="score-store">
+      <LastIntrospectionLocalTimestamp>2024-04-16.06:39:12</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
-    </schema>
-    <schema id="511" parent="1" name="performance_schema">
-      <CollationName>utf8mb3_general_ci</CollationName>
-    </schema>
-    <schema id="512" parent="1" name="sys">
-      <CollationName>utf8mb3_general_ci</CollationName>
     </schema>
     <user id="513" parent="1" name="healthcheck">
       <Host>127.0.0.1</Host>
@@ -1308,5 +1308,97 @@
     <user id="518" parent="1" name="root">
       <Host>localhost</Host>
     </user>
+    <table id="519" parent="512" name="player">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_general_ci</CollationName>
+    </table>
+    <table id="520" parent="512" name="score">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_general_ci</CollationName>
+    </table>
+    <table id="521" parent="512" name="status">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_general_ci</CollationName>
+    </table>
+    <column id="522" parent="519" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <DasType>int(11)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="523" parent="519" name="uuid">
+      <DasType>varchar(40)|0s</DasType>
+      <Position>2</Position>
+    </column>
+    <index id="524" parent="519" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="525" parent="519" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="526" parent="520" name="player_id">
+      <DasType>int(11)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="527" parent="520" name="key">
+      <DasType>varchar(64)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="528" parent="520" name="value">
+      <DasType>int(11)|0s</DasType>
+      <Position>3</Position>
+    </column>
+    <foreign-key id="529" parent="520" name="score">
+      <ColNames>player_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>player</RefTableName>
+    </foreign-key>
+    <index id="530" parent="520" name="PRIMARY">
+      <ColNames>player_id
+key</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="531" parent="520" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="532" parent="521" name="player_id">
+      <DasType>int(11)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="533" parent="521" name="type">
+      <DasType>int(11)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="534" parent="521" name="value">
+      <DasType>int(11)|0s</DasType>
+      <Position>3</Position>
+    </column>
+    <foreign-key id="535" parent="521" name="status">
+      <ColNames>player_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>player</RefTableName>
+    </foreign-key>
+    <index id="536" parent="521" name="PRIMARY">
+      <ColNames>player_id
+type</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="537" parent="521" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
   </database-model>
 </dataSource>
