@@ -1,7 +1,7 @@
 package net.kigawa.oyu.scoreboardstore.data.player
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.flow.update
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import org.bukkit.entity.Player
 
@@ -11,13 +11,15 @@ class PlayerManager(
 ) {
     private val players = MutableStateFlow(listOf<PlayerModel>())
 
-    suspend fun load(player: Player) = playerDatabase.getPlayer(player).let {
-        players.updateAndGet {
-            it.plus(it)
+    suspend fun load(player: Player) = playerDatabase.getPlayer(player).also { model ->
+        players.update {
+            it.plus(model)
         }
     }
 
-    fun unload(player: Player) = players.updateAndGet { list ->
-        list.filter { it.uuid != player.uniqueId }
+    fun unload(player: Player) = players.value.first { it.uuid == player.uniqueId }.also { model ->
+        players.update { list ->
+            list.minus(model)
+        }
     }
 }

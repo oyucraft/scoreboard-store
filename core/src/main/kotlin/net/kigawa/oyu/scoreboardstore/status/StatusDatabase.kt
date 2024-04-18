@@ -2,6 +2,7 @@ package net.kigawa.oyu.scoreboardstore.status
 
 import kotlinx.coroutines.runBlocking
 import net.kigawa.oyu.scoreboardstore.data.Connections
+import net.kigawa.oyu.scoreboardstore.data.player.PlayerModel
 import net.kigawa.oyu.scoreboardstore.data.score.ScoreDatabase
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
@@ -9,10 +10,10 @@ import org.bukkit.scoreboard.ScoreboardManager
 
 class StatusDatabase(
   val player: Player,
-  private val scoreDatabase: ScoreDatabase,
   private val coroutines: Coroutines,
   private val connections: Connections,
   private val scoreboardManager: ScoreboardManager,
+  private val playerModel: PlayerModel
 ) : AutoCloseable {
   private val statuses = mutableListOf<StatusEntry>()
 
@@ -29,7 +30,7 @@ class StatusDatabase(
           "SELECT type,value FROM status " +
               "WHERE player_id = ?"
         ).use { st ->
-          st.setInt(1, scoreDatabase.playerId.await())
+          st.setInt(1, playerModel.id)
           val result = st.executeQuery()
           while (result.next()) {
             val type = StatusType.entries.first { it.key == result.getInt("type") }
@@ -58,7 +59,7 @@ class StatusDatabase(
                     "ON DUPLICATE KEY UPDATE " +
                     "value = ?"
               ).use {
-                it.setInt(1, scoreDatabase.playerId.await())
+                it.setInt(1, playerModel.id)
                 it.setInt(2, entry.statusType.key)
                 it.setInt(3, entry.value)
                 it.setInt(4, entry.value)

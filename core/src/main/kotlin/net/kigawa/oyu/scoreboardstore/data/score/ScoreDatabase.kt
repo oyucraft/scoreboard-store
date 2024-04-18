@@ -1,16 +1,17 @@
 package net.kigawa.oyu.scoreboardstore.data.score
 
-import kotlinx.coroutines.runBlocking
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.data.Connections
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerModel
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
+import org.bukkit.scoreboard.ScoreboardManager
 import java.sql.Connection
 
 @Kunit
 class ScoreDatabase(
     private val connections: Connections,
     private val coroutines: Coroutines,
+    private val scoreboardManager: ScoreboardManager
 ) {
 
     suspend fun getScores(playerModel: PlayerModel) = coroutines.withIo {
@@ -20,7 +21,7 @@ class ScoreDatabase(
     }
 
     private fun Connection.byPlayer(playerModel: PlayerModel) = prepareStatement(
-        "SELECT player_id,`key`,value FROM score " +
+        "SELECT `key`,value FROM score " +
                 "WHERE player_id = ?"
     ).use { con ->
         con.setInt(1, playerModel.id)
@@ -28,12 +29,11 @@ class ScoreDatabase(
         mutableListOf<ScoreModel>()
             .apply {
                 while (result.next()) {
-                    add(
-                        ScoreModel(
-                            key = result.getString("key"),
-                            value = result.getInt("value")
-                        )
-                    )
+                    val key = result.getString("key")
+                    val value = result.getInt("value")
+                    add(ScoreModel(key))
+                    scoreboardManager.mainScoreboard.getScores(playerModel.player.name)
+                        .first { it.objective.name == key }.score = value
                 }
             }
             .let { ScoreModels(playerModel, it) }
@@ -52,45 +52,14 @@ class ScoreDatabase(
             ON DUPLICATE KEY UPDATE
             value = ?
             """
-        ).use {
-            it.setInt(1, scoreModels.playerModel.id)
-            it.setString(2, score.key)
-            it.setInt(3, score.value)
-            it.setInt(4, score.value)
-            it.executeUpdate()
+        ).use { st ->
+            val value = scoreboardManager.mainScoreboard.getScores(scoreModels.playerModel.player.name)
+                .first { it.objective.name == score.key }.score
+            st.setInt(1, scoreModels.playerModel.id)
+            st.setString(2, score.key)
+            st.setInt(3, value)
+            st.setInt(4, value)
+            st.executeUpdate()
         }
     }
-
-
-    fun save(key: String) {
-        coroutines.launchIo {
-            synchronized(scores) {
-                val scores = runBlocking { scores.await() }
-                scores.removeIf {
-                    it.key == key
-                }
-                scores.add(
-                    ScoreModel(
-                        key,
-                        scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score
-                    )
-                )
-            }
-        }
-    }
-
-    fun load(key: String, defaultValue: Int) {
-        scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score = defaultValue
-        coroutines.launchIo {
-            synchronized(scores) {
-                val score = runBlocking { scores.await() }.first {
-                    it.key == key
-                }
-                scoreboardManager.mainScoreboard.getScores(player.name).first { it.objective.name == key }.score =
-                    score.value
-            }
-        }
-    }
-
-
 }

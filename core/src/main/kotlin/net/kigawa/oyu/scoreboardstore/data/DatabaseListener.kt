@@ -2,7 +2,7 @@ package net.kigawa.oyu.scoreboardstore.data
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerManager
-import net.kigawa.oyu.scoreboardstore.data.score.ScoreDatabase
+import net.kigawa.oyu.scoreboardstore.data.score.ScoreManager
 import net.kigawa.oyu.scoreboardstore.status.StatusDatabase
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
 import org.bukkit.entity.Player
@@ -18,8 +18,8 @@ class DatabaseListener(
     private val scoreboardManager: ScoreboardManager,
     private val coroutines: Coroutines,
     private val playerManager: PlayerManager,
+    private val scoreManager: ScoreManager
 ) : Listener {
-    private val scoreDatabases = mutableListOf<ScoreDatabase>()
     private val statusDatabases = mutableListOf<StatusDatabase>()
 
     init {
@@ -54,56 +54,38 @@ class DatabaseListener(
         val player = playerJoinEvent.player
         coroutines.launchDefault {
             val playerModel = playerManager.load(player)
-        }
-        val scoreDatabase = ScoreDatabase(
-            playerJoinEvent.player,
-            connections,
-            scoreboardManager = scoreboardManager,
-            coroutines = coroutines
-        )
-        synchronized(scoreDatabases) {
-            scoreDatabases.add(scoreDatabase)
-        }
-        synchronized(statusDatabases) {
-            statusDatabases.add(
-                StatusDatabase(
-                    playerJoinEvent.player,
-                    scoreDatabase,
-                    coroutines,
-                    connections,
-                    scoreboardManager
+            val scores = scoreManager.load(playerModel)
+            synchronized(statusDatabases) {
+                statusDatabases.add(
+                    StatusDatabase(
+                        playerJoinEvent.player,
+                        coroutines,
+                        connections,
+                        scoreboardManager,
+                        playerModel
+                    )
                 )
-            )
+            }
         }
     }
 
     @EventHandler
     fun quit(playerQuitEvent: PlayerQuitEvent) {
-        synchronized(scoreDatabases) {
-            scoreDatabases.filter {
-                playerQuitEvent.player == it.player
-            }.forEach {
-                scoreDatabases.remove(it)
-                it.close()
-            }
-        }
-        synchronized(statusDatabases) {
-            statusDatabases.filter {
-                playerQuitEvent.player == it.player
-            }.forEach {
-                statusDatabases.remove(it)
-                it.close()
+        val player = playerQuitEvent.player
+        coroutines.launchDefault {
+            val playerModel = playerManager.unload(player)
+            val scores = scoreManager.unload(playerModel)
+            synchronized(statusDatabases) {
+                statusDatabases.filter {
+                    playerQuitEvent.player == it.player
+                }.forEach {
+                    statusDatabases.remove(it)
+                    it.close()
+                }
             }
         }
     }
 
-    fun getPlayerDatabase(player: Player): ScoreDatabase {
-        return synchronized(scoreDatabases) {
-            scoreDatabases.first {
-                it.player == player
-            }
-        }
-    }
 
     fun getStatusDatabase(player: Player): StatusDatabase {
         return synchronized(statusDatabases) {

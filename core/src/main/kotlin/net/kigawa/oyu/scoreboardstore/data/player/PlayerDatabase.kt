@@ -28,30 +28,31 @@ class PlayerDatabase(
 
     suspend fun getPlayer(player: Player) = coroutines.withIo {
         connections.get().use con@{ con ->
-            con.byUuid(player.uniqueId) ?: con.insert(player.uniqueId)
+            con.byPlayer(player) ?: con.insert(player)
         }
     }
 
-    private fun Connection.byUuid(uuid: UUID) = prepareStatement("SELECT id,uuid FROM player WHERE uuid = ?").use {
-        it.setString(1, uuid.toString())
-        val result = it.executeQuery()
-        return@use if (result.next()) {
-            PlayerModel(
-                result.getInt("id"),
-                UUID.fromString(result.getString("uuid"))
-            )
-        } else null
-    }
+    private fun Connection.byPlayer(player: Player) =
+        prepareStatement("SELECT id,uuid FROM player WHERE uuid = ?").use {
+            it.setString(1, player.uniqueId.toString())
+            val result = it.executeQuery()
+            return@use if (result.next()) {
+                PlayerModel(
+                    result.getInt("id"),
+                    player
+                )
+            } else null
+        }
 
-    private fun Connection.insert(uuid: UUID) = prepareStatement(
+    private fun Connection.insert(player: Player) = prepareStatement(
         "INSERT INTO player (uuid) VALUES (?)",
         Statement.RETURN_GENERATED_KEYS
     ).use st@{ st ->
-        st.setString(1, uuid.toString())
+        st.setString(1, player.uniqueId.toString())
         st.executeUpdate()
         st.generatedKeys.use {
             it.next()
-            return@st PlayerModel(it.getInt(1), uuid)
+            return@st PlayerModel(it.getInt(1), player)
         }
     }
 }
