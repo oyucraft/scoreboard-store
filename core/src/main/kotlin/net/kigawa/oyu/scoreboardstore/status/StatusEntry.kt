@@ -15,8 +15,8 @@ class StatusEntry(
 
 
   init {
-    val obj = scoreboardManager.mainScoreboard.getObjective(statusType.name)
-      ?: scoreboardManager.mainScoreboard.registerNewObjective(statusType.name, "dummy", statusType.name)
+    val obj = scoreboardManager.mainScoreboard.getObjective(statusType.label)
+      ?: scoreboardManager.mainScoreboard.registerNewObjective(statusType.label, "dummy", statusType.label)
     score = obj.getScore(player.name)
     score.score = -1
   }
