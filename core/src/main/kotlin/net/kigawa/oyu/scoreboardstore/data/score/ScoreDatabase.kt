@@ -1,6 +1,8 @@
 package net.kigawa.oyu.scoreboardstore.data.score
 
+import net.kigawa.kutil.kutil.list.contains
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.config.ScoreStoreConfig
 import net.kigawa.oyu.scoreboardstore.data.Connections
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerModel
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
@@ -11,7 +13,8 @@ import java.sql.Connection
 class ScoreDatabase(
     private val connections: Connections,
     private val coroutines: Coroutines,
-    private val scoreboardManager: ScoreboardManager
+    private val scoreboardManager: ScoreboardManager,
+    private val config: ScoreStoreConfig
 ) {
 
     suspend fun getScores(playerModel: PlayerModel) = coroutines.withIo {
@@ -35,6 +38,17 @@ class ScoreDatabase(
                     scoreboardManager.mainScoreboard.getScores(playerModel.player.name)
                         .first { it.objective.name == key }.score = value
                 }
+            }
+            .apply {
+                config.saveScoreboard
+                    .filter { configKey -> !contains { it.key == configKey } }
+                    .map { ScoreModel(it) }
+                    .also { addAll(it) }
+                    .forEach {
+                        val obj = scoreboardManager.mainScoreboard.getObjective(it.key)
+                            ?: scoreboardManager.mainScoreboard.registerNewObjective(it.key, "dummy", it.key)
+                        obj.getScore(playerModel.player.name).score = 0
+                    }
             }
             .let { ScoreModels(playerModel, it) }
     }

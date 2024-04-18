@@ -3,12 +3,12 @@ package net.kigawa.oyu.scoreboardstore.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import net.kigawa.kutil.unitapi.annotation.Kunit
-import net.kigawa.oyu.scoreboardstore.config.ScoreboardStoreConfig
+import net.kigawa.oyu.scoreboardstore.config.ScoreStoreConfig
 import java.sql.Connection
 
 @Kunit
 class Connections(
-  pluginConfig: ScoreboardStoreConfig,
+  pluginConfig: ScoreStoreConfig,
 ) {
   val hikari: HikariDataSource
 

@@ -1,5 +1,7 @@
 package net.kigawa.oyu.scoreboardstore.data
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerManager
 import net.kigawa.oyu.scoreboardstore.data.score.ScoreManager
@@ -20,7 +22,7 @@ class DatabaseListener(
     private val playerManager: PlayerManager,
     private val scoreManager: ScoreManager
 ) : Listener {
-    private val statusDatabases = mutableListOf<StatusDatabase>()
+    private val statusDatabases = MutableStateFlow(listOf<StatusDatabase>())
 
     init {
         connections.hikari.connection.use { con ->
@@ -55,17 +57,17 @@ class DatabaseListener(
         coroutines.launchDefault {
             val playerModel = playerManager.load(player)
             val scores = scoreManager.load(playerModel)
-            synchronized(statusDatabases) {
-                statusDatabases.add(
-                    StatusDatabase(
-                        playerJoinEvent.player,
-                        coroutines,
-                        connections,
-                        scoreboardManager,
-                        playerModel
-                    )
-                )
+            val statusDatabase = StatusDatabase.create(
+                playerJoinEvent.player,
+                coroutines,
+                connections,
+                scoreboardManager,
+                playerModel
+            )
+            statusDatabases.update {
+                it.plus(statusDatabase)
             }
+
         }
     }
 
@@ -75,23 +77,20 @@ class DatabaseListener(
         coroutines.launchDefault {
             val playerModel = playerManager.unload(player)
             val scores = scoreManager.unload(playerModel)
-            synchronized(statusDatabases) {
-                statusDatabases.filter {
-                    playerQuitEvent.player == it.player
-                }.forEach {
-                    statusDatabases.remove(it)
-                    it.close()
-                }
+            statusDatabases.value.filter {
+                playerQuitEvent.player == it.player
+            }.also { toRm ->
+                statusDatabases.update { it.minus(toRm.toSet()) }
+            }.forEach {
+                it.close()
             }
         }
     }
 
 
     fun getStatusDatabase(player: Player): StatusDatabase {
-        return synchronized(statusDatabases) {
-            statusDatabases.first {
-                it.player == player
-            }
+        return statusDatabases.value.first {
+            it.player == player
         }
     }
 }

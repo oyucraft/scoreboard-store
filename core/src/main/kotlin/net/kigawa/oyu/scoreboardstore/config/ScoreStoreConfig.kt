@@ -5,7 +5,7 @@ import net.kigawa.oyu.scoreboardstore.util.config.ConfigParent
 import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 
 @Kunit
-class ScoreboardStoreConfig : ConfigParent() {
+class ScoreStoreConfig : ConfigParent() {
   @ConfigValue
   val db = DatabaseConfig()
 

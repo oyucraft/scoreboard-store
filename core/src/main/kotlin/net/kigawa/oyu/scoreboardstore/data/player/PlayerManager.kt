@@ -17,7 +17,7 @@ class PlayerManager(
         }
     }
 
-    fun unload(player: Player) = players.value.first { it.uuid == player.uniqueId }.also { model ->
+    fun unload(player: Player) = players.value.first { it.player == player }.also { model ->
         players.update { list ->
             list.minus(model)
         }

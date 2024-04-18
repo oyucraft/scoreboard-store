@@ -5,11 +5,11 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import net.kigawa.kutil.unitapi.annotation.Kunit
-import net.kigawa.oyu.scoreboardstore.config.ScoreboardStoreConfig
+import net.kigawa.oyu.scoreboardstore.config.ScoreStoreConfig
 
 @Kunit
 class GuiCommand(
-  private val config: ScoreboardStoreConfig,
+    private val config: ScoreStoreConfig,
 ) {
   fun cmd(): CommandAPICommand = CommandAPICommand("gui")
     .withArguments(
