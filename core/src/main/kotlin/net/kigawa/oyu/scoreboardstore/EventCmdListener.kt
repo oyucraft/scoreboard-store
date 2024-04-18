@@ -2,6 +2,7 @@ package net.kigawa.oyu.scoreboardstore
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.config.ScoreStoreConfig
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,6 +17,12 @@ class EventCmdListener(
     fun join(event: PlayerJoinEvent) {
         scoreboardStoreConfig.cmd.onJoin.forEach {
             event.player.performCommand(it)
+        }
+    }
+
+    fun ready(player: Player) {
+        scoreboardStoreConfig.cmd.onReady.forEach {
+            player.performCommand(it)
         }
     }
 

@@ -39,7 +39,7 @@ class ConfigUtil(private val plugin: PluginBase) {
   fun configFields(config: ConfigObject): List<ConfigField> {
     return type(config).memberProperties.mapNotNull {
       val configName = it.javaField?.getAnnotation(ConfigValue::class.java) ?: return@mapNotNull null
-      return@mapNotNull ConfigField(config, it, configName)
+      return@mapNotNull ConfigField(config, it, configName,this)
     }
   }
 }

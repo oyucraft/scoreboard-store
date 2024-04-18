@@ -3,11 +3,13 @@ package net.kigawa.oyu.scoreboardstore.data
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.EventCmdListener
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerManager
 import net.kigawa.oyu.scoreboardstore.data.score.ScoreManager
+import net.kigawa.oyu.scoreboardstore.player.StatusManager
 import net.kigawa.oyu.scoreboardstore.status.StatusDatabase
+import net.kigawa.oyu.scoreboardstore.util.Async
 import net.kigawa.oyu.scoreboardstore.util.concurrent.Coroutines
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,7 +22,10 @@ class DatabaseListener(
     private val scoreboardManager: ScoreboardManager,
     private val coroutines: Coroutines,
     private val playerManager: PlayerManager,
-    private val scoreManager: ScoreManager
+    private val scoreManager: ScoreManager,
+    private val statusManager: StatusManager,
+    private val eventCmdListener: EventCmdListener,
+    private val async: Async
 ) : Listener {
     private val statusDatabases = MutableStateFlow(listOf<StatusDatabase>())
 
@@ -67,7 +72,8 @@ class DatabaseListener(
             statusDatabases.update {
                 it.plus(statusDatabase)
             }
-
+            statusManager.load(player, statusDatabase)
+            async.runTaskSync { eventCmdListener.ready(player) }
         }
     }
 
@@ -77,6 +83,7 @@ class DatabaseListener(
         coroutines.launchDefault {
             val playerModel = playerManager.unload(player)
             val scores = scoreManager.unload(playerModel)
+            statusManager.unload(player)
             statusDatabases.value.filter {
                 playerQuitEvent.player == it.player
             }.also { toRm ->
@@ -88,9 +95,4 @@ class DatabaseListener(
     }
 
 
-    fun getStatusDatabase(player: Player): StatusDatabase {
-        return statusDatabases.value.first {
-            it.player == player
-        }
-    }
 }

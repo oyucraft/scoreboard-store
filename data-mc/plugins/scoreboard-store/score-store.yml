@@ -1,0 +1,10 @@
+cmd:
+  onJoin: ['tellraw @s {"text": "on join"}']
+  onQuit: ['tellraw @s {"text": "on quit"}']
+  onReady: ['tellraw @s {"text": "on ready"}']
+db: {host: score-store-mariadb, name: score-store, pass: root, port: 3306, user: root}
+gui:
+- items:
+  - {cmd: null, column: 0, id: '', row: 0}
+  name: guiName
+saveScoreboard: [test]

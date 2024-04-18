@@ -3,8 +3,10 @@ package net.kigawa.oyu.scoreboardstore.data.score
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
+import net.kigawa.kutil.unitapi.annotation.Kunit
 import net.kigawa.oyu.scoreboardstore.data.player.PlayerModel
 
+@Kunit
 class ScoreManager(
     private val scoreDatabase: ScoreDatabase
 ) {
