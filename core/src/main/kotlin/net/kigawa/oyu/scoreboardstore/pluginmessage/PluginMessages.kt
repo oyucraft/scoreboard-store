@@ -101,7 +101,6 @@ class PluginMessages(
     }
 
     suspend fun connectServer(player: Player, server: String) = runTask(player, "Connect", server) {
-        return@runTask receiveChannel.receive()
     }
 
 }

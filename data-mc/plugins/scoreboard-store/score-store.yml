@@ -3,6 +3,7 @@ cmd:
   onQuit: ['tellraw @s {"text": "on quit"}']
   onReady: ['tellraw @s {"text": "on ready"}']
 db: {host: score-store-mariadb, name: score-store, pass: root, port: 3306, user: root}
+debug: false
 gui:
 - items:
   - {cmd: null, column: 0, id: '', row: 0}

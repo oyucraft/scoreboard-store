@@ -24,10 +24,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6455cac0-7e61-4cf0-a2f2-26e2974463bc" name="変更" comment="Refactor database and update configurations in ScoreboardStore">
+      <change afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/DbugLogger.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/scoreboard_store_core_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusEntry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusEntry.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/status/StatusType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/command/ScoreStoreCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreStoreConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/config/ScoreStoreConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/player/PlayerModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/data/score/ScoreManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerSession.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/PlayerSession.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/StatusManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/player/StatusManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/pluginmessage/PluginMessages.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data-bungee/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/data-bungee/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-mc/plugins.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-mc/plugins/scoreboard-store/score-store.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,18 +115,19 @@
   "keyToString": {
     "Docker.docker-compose.yml: Compose デプロイ.executor": "Run",
     "Gradle.scoreboard-store [shadowJar].executor": "Run",
+    "Gradle.scoreboard-store のビルド.executor": "Run",
     "Gradle.ソースのダウンロード.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/kigawa/dev/oyu/scoreboard-store/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util",
+    "last_opened_file_path": "/home/kigawa/dev/oyu/scoreboard-store",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "プロジェクト",
+    "project.structure.last.edited": "アーティファクト",
     "project.structure.proportion": "0.15990058",
     "project.structure.side.proportion": "0.3620489",
     "vue.rearranger.settings.migration": "true"
@@ -136,8 +148,8 @@
       <window_info id="Commit_Guest" show_stripe_button="false" />
       <window_info id="Pull Requests" show_stripe_button="false" />
       <window_info id="Learn" show_stripe_button="false" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.22265625" />
-      <window_info active="true" id="Commit" order="1" visible="true" weight="0.22421876" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16666667" />
+      <window_info id="Commit" order="1" weight="0.22432643" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" show_stripe_button="false" />
@@ -145,21 +157,21 @@
       <window_info anchor="bottom" id="TODO" show_stripe_button="false" />
       <window_info anchor="bottom" id="Find Mixins" />
       <window_info anchor="bottom" id="File Transfer" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.27961236" />
       <window_info anchor="bottom" id="Problems" order="1" />
       <window_info anchor="bottom" id="Problems View" order="2" />
       <window_info anchor="bottom" id="Terminal" order="3" weight="0.32994187" />
-      <window_info anchor="bottom" id="Build" order="4" weight="0.2437186" />
+      <window_info anchor="bottom" id="Build" order="4" weight="0.2431018" />
       <window_info anchor="bottom" id="Messages" order="5" weight="0.33018017" />
-      <window_info active="true" anchor="bottom" id="Services" order="6" visible="true" weight="0.33575583" />
-      <window_info anchor="bottom" id="Find" order="6" weight="0.3298636" />
+      <window_info active="true" anchor="bottom" id="Services" order="6" visible="true" weight="0.3147619" />
+      <window_info anchor="bottom" id="Run" order="7" weight="0.32968602" />
+      <window_info anchor="bottom" id="Find" order="7" weight="0.3298636" />
       <window_info anchor="right" id="Endpoints" show_stripe_button="false" />
       <window_info anchor="right" id="documentation.v2" side_tool="true" />
       <window_info anchor="right" id="Coverage" show_stripe_button="false" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
       <window_info anchor="right" id="AIAssistant" order="1" weight="0.25" />
-      <window_info active="true" anchor="right" id="Database" order="2" visible="true" weight="0.18932292" />
+      <window_info active="true" anchor="right" id="Database" order="2" visible="true" weight="0.14177293" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
       <window_info anchor="right" id="Maven" order="4" weight="0.25" />
       <window_info anchor="right" id="Translation.Wordbook" order="5" show_stripe_button="false" side_tool="true" />
@@ -167,8 +179,13 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/core/src/main/kotlin/net/kigawa/oyu/scoreboardstore/util" />
       <recent name="D:\project\dev\oyu\scoreboard-store" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data-mc" />
+      <recent name="$PROJECT_DIR$/data-mc/plugins" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="net.kigawa.oyu.scoreboardstore.data.score" />
@@ -244,7 +261,8 @@
       <workItem from="1713031938019" duration="3104000" />
       <workItem from="1713106197680" duration="3469000" />
       <workItem from="1713344861624" duration="7545000" />
-      <workItem from="1713360696092" duration="28784000" />
+      <workItem from="1713360696092" duration="41043000" />
+      <workItem from="1713597462876" duration="2776000" />
     </task>
     <task id="LOCAL-00001" summary="wip">
       <option name="closed" value="true" />
@@ -310,7 +328,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713448518114</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Refactor database and update configurations in ScoreboardStore">
+      <option name="closed" value="true" />
+      <created>1713452800269</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1713452800269</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

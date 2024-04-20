@@ -10,10 +10,42 @@ services:
     environment:
       TYPE: "SPIGOT"
       EULA: "true"
-      MAX_MEMORY: 4G
+      MAX_MEMORY: 1G
       JVM_XX_OPTS: ""
       VERSION: 1.20.2
       MODS_FILE: /data/plugins.txt
+      SPIGET_RESOURCES: ""
+      REMOVE_OLD_MODS: "false"
+      #      REMOVE_OLD_MODS_INCLUDE: "*.jar"
+      REMOVE_OLD_MODS_EXCLUDE: ""
+      REMOVE_OLD_MODS_DEPTH: "1"
+      SYNC_SKIP_NEWER_IN_DESTINATION: "true"
+      ONLINE_MODE: "false"
+    ports: [ ]
+    restart: no
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: '3'
+    depends_on: [ mariadb ]
+    links:
+      - mariadb:score-store-mariadb
+  mc1:
+    # https://docker-minecraft-server.readthedocs.io/en/latest/
+    image: itzg/minecraft-server:java17
+    container_name: score-store-mc1
+    volumes:
+      - type: bind
+        source: ./data-mc1
+        target: /data
+    environment:
+      TYPE: "SPIGOT"
+      EULA: "true"
+      MAX_MEMORY: 1G
+      JVM_XX_OPTS: ""
+      VERSION: 1.20.2
+#      MODS_FILE: /data/plugins.txt
       SPIGET_RESOURCES: ""
       REMOVE_OLD_MODS: "false"
       #      REMOVE_OLD_MODS_INCLUDE: "*.jar"

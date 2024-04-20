@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="scoreboard-store.core:jar">
+  <artifact type="jar" build-on-make="true" name="scoreboard-store.core:jar">
     <output-path>$PROJECT_DIR$/data-mc/plugins</output-path>
     <root id="archive" name="scoreboard-store.core.jar">
       <element id="module-output" name="scoreboard-store.core.main" />

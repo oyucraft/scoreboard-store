@@ -18,7 +18,7 @@ class ScoreManager(
     }
 
     suspend fun unload(playerModel: PlayerModel) = scores.value
-        .first { it.playerModel == playerModel }.also { score ->
+        .firstOrNull { it.playerModel == playerModel }?.also { score ->
             scores.update { it.minus(score) }
             scoreDatabase.saveScores(score)
         }

@@ -35,8 +35,10 @@ class ScoreDatabase(
                     val key = result.getString("key")
                     val value = result.getInt("value")
                     add(ScoreModel(key))
-                    scoreboardManager.mainScoreboard.getScores(playerModel.player.name)
-                        .first { it.objective.name == key }.score = value
+                    val obj = scoreboardManager.mainScoreboard.getObjective(key)
+                        ?: scoreboardManager.mainScoreboard.registerNewObjective(key, "dummy", key)
+
+                    obj.getScore(playerModel.player.name).score = value
                 }
             }
             .apply {

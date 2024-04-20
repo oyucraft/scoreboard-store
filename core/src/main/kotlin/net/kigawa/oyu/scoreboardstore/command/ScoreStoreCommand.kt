@@ -63,7 +63,7 @@ class ScoreStoreCommand(
         })
 
     @SubCommand
-    fun server(): CommandAPICommand = CommandAPICommand("player-count")
+    fun server(): CommandAPICommand = CommandAPICommand("server")
         .withArguments(PlayerArgument("player"))
         .withArguments(StringArgument("server name"))
         .executes(CommandExecutor { _, commandArguments ->

@@ -1,21 +1,21 @@
 package net.kigawa.oyu.scoreboardstore.player
 
 import net.kigawa.kutil.unitapi.annotation.Kunit
+import net.kigawa.oyu.scoreboardstore.DbugLogger
 import net.kigawa.oyu.scoreboardstore.ScoreboardStore
-import net.kigawa.oyu.scoreboardstore.data.DatabaseListener
 import net.kigawa.oyu.scoreboardstore.status.StatusDatabase
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityRegainHealthEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scheduler.BukkitScheduler
 
 @Kunit
 class StatusManager(
     scoreboardStore: ScoreboardStore,
     scheduler: BukkitScheduler,
+    private val debugLogger: DbugLogger
 ) : Listener {
     private val sessions = mutableListOf<PlayerSession>()
 
@@ -27,10 +27,10 @@ class StatusManager(
         }, 1, 1)
     }
 
-    fun load(player: Player,statusDatabase: StatusDatabase) {
+    fun load(player: Player, statusDatabase: StatusDatabase) {
         synchronized(sessions) {
             sessions.add(
-                PlayerSession(player, statusDatabase)
+                PlayerSession(player, statusDatabase, debugLogger)
             )
         }
     }
@@ -46,7 +46,7 @@ class StatusManager(
         val entity = event.entity
         if (entity !is Player) return
         synchronized(sessions) {
-            sessions.firstOrNull() { it.player == entity }
+            sessions.firstOrNull { it.player == entity }
         }?.damage(event)
 
     }

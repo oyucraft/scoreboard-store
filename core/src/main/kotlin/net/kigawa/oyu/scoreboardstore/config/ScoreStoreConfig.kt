@@ -6,15 +6,18 @@ import net.kigawa.oyu.scoreboardstore.util.config.annotation.ConfigValue
 
 @Kunit
 class ScoreStoreConfig : ConfigParent() {
-  @ConfigValue
-  val db = DatabaseConfig()
+    @ConfigValue
+    val db = DatabaseConfig()
 
-  @ConfigValue
-  val saveScoreboard = listOf<String>()
+    @ConfigValue
+    val saveScoreboard = listOf<String>()
 
-  @ConfigValue
-  val cmd = CmdConfig()
+    @ConfigValue
+    val cmd = CmdConfig()
 
-  @ConfigValue
-  val gui = mutableListOf(GuiConfig())
+    @ConfigValue
+    val gui = mutableListOf(GuiConfig())
+
+    @ConfigValue
+    val debug = false
 }
