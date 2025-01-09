@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="@localhost [2]">
-  <database-model serializer="dbm" dbms="MARIADB" family-id="MARIADB" format-version="4.52">
+  <database-model serializer="dbm" dbms="MARIADB" family-id="MARIADB" format-version="4.53">
     <root id="1">
       <DefaultCasing>exact</DefaultCasing>
       <DefaultEngine>InnoDB</DefaultEngine>
@@ -1322,13 +1322,13 @@
     </table>
     <column id="522" parent="519" name="id">
       <AutoIncrement>1</AutoIncrement>
-      <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <column id="523" parent="519" name="uuid">
-      <DasType>varchar(40)|0s</DasType>
       <Position>2</Position>
+      <StoredType>varchar(40)|0s</StoredType>
     </column>
     <index id="524" parent="519" name="PRIMARY">
       <ColNames>id</ColNames>
@@ -1341,18 +1341,18 @@
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="526" parent="520" name="player_id">
-      <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <column id="527" parent="520" name="key">
-      <DasType>varchar(64)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
+      <StoredType>varchar(64)|0s</StoredType>
     </column>
     <column id="528" parent="520" name="value">
-      <DasType>int(11)|0s</DasType>
       <Position>3</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <foreign-key id="529" parent="520" name="score">
       <ColNames>player_id</ColNames>
@@ -1371,18 +1371,18 @@ key</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="532" parent="521" name="player_id">
-      <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <column id="533" parent="521" name="type">
-      <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <column id="534" parent="521" name="value">
-      <DasType>int(11)|0s</DasType>
       <Position>3</Position>
+      <StoredType>int(11)|0s</StoredType>
     </column>
     <foreign-key id="535" parent="521" name="status">
       <ColNames>player_id</ColNames>
