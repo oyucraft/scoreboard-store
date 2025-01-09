@@ -1,4 +1,4 @@
-package net.kigawa.oyu.scoreboardstore.util.config.annotation
+package net.kigawa.oyucraft.oyubingo.config.annotation
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)

@@ -1,8 +1,7 @@
-
-/paper-*.jar
 /.rcon-cli.yaml
 /.rcon-cli.env
 /whitelist.json
+/spigot.yml
 /usercache.json
 /version_history.json
 /permissions.yml
